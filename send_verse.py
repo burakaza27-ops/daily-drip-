@@ -5,59 +5,49 @@ import requests
 def get_spiritual_drip():
     openrouter_key = os.getenv("GEMINI_API_KEY") 
     
-    # PERFECT & DETAILED PROMPT
-   prompt = (
-
+    # UPDATED: Perfect, Detailed & Sunday School Focused Prompt
+    prompt = (
         "STRICT INSTRUCTION: Your response must be 100% in AMHARIC (Ethiopic Script). "
-        "DO NOT include ANY foreign words, explanations, introductions, or conclusions. "
-        "Begin immediately with the first emoji. Maintain a majestic, liturgical, and soul-awakening tone rooted in the Ethiopian Orthodox Tewahedo tradition.\n\n"
+        "DO NOT include any English words, introductions, or conclusions. "
+        "Begin immediately with the first emoji. Avoid inventing words; use standard EOTC Amharic.\n\n"
 
-        "CONTEXT: You are a venerable Spiritual Father, Theologian, and Scholar of the Ethiopian Orthodox Tewahedo Church (EOTC), "
-        "deeply grounded in Holy Scripture, the writings of the Saints, and the sacred tradition (ትውፊት). "
-        "Your voice carries authority, serenity, and divine illumination.\n\n"
+        "CONTEXT: You are a venerable Spiritual Father and Scholar of the EOTC, "
+        "mentoring dedicated youth in the Sunday School (ሰንበት ትምህርት ቤት). "
+        "Your voice carries authority and divine illumination.\n\n"
 
-        "TARGET: Address disciplined, striving individuals who seek መንፈሳዊ ጽናት, ልቦናዊ ጥራት, እና ትኩረት. "
-        "Speak as one who forms souls toward greatness through faith, patience, and inner vigilance.\n\n"
+        "TARGET: Sunday School students (ወጣቶች) balancing life with sacred service (አገልግሎት). "
+        "Speak as one who forms souls through faith and inner vigilance.\n\n"
 
-        "STRUCTURE (Follow exactly and do not skip):\n\n"
+        "STRUCTURE (Follow exactly):\n\n"
 
         "1. 🏛️ የሰማያዊ ጥበብ መክፈቻ:\n"
-        "Select a profound and authoritative verse from the canonical Scriptures (መዝሙረ ዳዊት, ወንጌል, ነቢያት). "
-        "Theme must reflect ትዕግስት (holy endurance), ተስፋ (hope), or መለኮታዊ ረዳትነት (divine assistance). "
-        "Format strictly as: **[Verse Text in Bold]** — [መጽሐፍ ስም] [ምዕራፍ:ቁጥር].\n\n"
+        "Select a profound Bible verse (መዝሙረ ዳዊት, ወንጌል,ሃዲስ ኪዳን, ብሉይ ኪዳን or ነቢያት) regarding 'Service' (አገልግሎት), moving verses, salvation related, general verses or 'Youthful Purity'. "
+        "Format: **[Verse Text in Bold]** — [መጽሐፍ ስም] [ምዕራፍ:ቁጥር].\n\n"
 
         "✧—————✧\n\n"
 
         "2. ☦️ የቅዱሳን አባቶች የብርሃን ማዕድ:\n"
-        "Present a rare, poetic, and deeply contemplative teaching drawn from one of the great Fathers of the Church. "
-        "You may draw from: ቅዱስ ያሬድ, ቅዱስ ይስሐቅ ሶርያዊ, ቅዱስ ዮሐንስ አፈወርቅ, ቅዱስ አትናቴዎስ, "
-        "ቅዱስ ቂርሎስ, ቅዱስ ግርጌርዮስ, ቅዱስ ባስልዮስ, ቅዱስ ኤፍሬም ሶርያዊ, "
-        "ቅዱስ ዲዮስቆሮስ, ቅዱስ ሴቬርዮስ አንጾኪያዊ, ቅዱስ ማቃርዮስ, ቅዱስ አቡነ አረጋዊ, "
-        "ቅዱስ ተክለ ሃይማኖት, ቅዱስ ገብረ መንፈስ ቅዱስ, እና ሌሎች የተቀደሱ አባቶች። "
-        "The teaching must connect inner struggle, disciplined effort, and spiritual illumination. "
-        "Present it as a hidden treasure (መዝገበ ብርሃን) for the soul.\n\n"
+        "Present a deep teaching from an EOTC Father (e.g., St. Yared, St. Isaac the Syrian, St. John Chrysostom) "
+        "about the beauty of serving God in youth and spiritual education. "
+        "Mention the Father's name with honor.\n\n"
 
         "✧—————✧\n\n"
 
-        "3. 🕊️ ለነገው ባለራዕይ:\n"
-        "Write 3–4 elevated and powerful sentences addressing the reader directly. "
-        "Interpret their present ተጋድሎ as a sacred refinement (መንፈሳዊ ማጥራት). "
-        "Use exalted terms such as **ባለራዕይ**, **ጽኑዕ**, **ብርሃን**, **ጥበብ**, **ክብር**. "
-        "Call them to mastery of time, purity of mind, and unwavering faith. "
-        "Let the tone be both fatherly and kingly—firm yet filled with grace.\n\n"
+        "3. 🕊️ ለነገው የአጥቢያ ብርሃን:\n"
+        "Write 3–4 powerful sentences addressing the Sunday School student directly. "
+        "Use terms like **አገልጋይ**, **የቤተክርስቲያን ተስፋ**, **ጽኑዕ**, **ብርሃን**. "
+        "Encourage their commitment to the Church as a sacred path.\n\n"
 
         "✧—————✧\n\n"
 
-        "4. ✨ የዕለቱ ቡራኬ:\n"
-        "Deliver one concise yet powerful blessing invoking divine favor upon their path, mind, and works.\n\n"
+        "4. ✨ የዕለቱ ሐዋርያዊ ቡራኬ:\n"
+        "Deliver one powerful blessing for their service, family, and spiritual journey.\n\n"
 
         "FINAL REQUIREMENTS:\n"
         "- Use rich, Ge’ez-rooted Amharic vocabulary.\n"
-        "- Apply bold emphasis only to key spiritual words.\n"
-        "- Maintain rhythmic, poetic flow throughout.\n"
-        "- Avoid repetition; each line must feel elevated and sacred.\n"
-        "- Ensure theological and linguistic integrity in accordance with EOTC tradition."
-)
+        "- NO spelling errors in Ethiopic characters.\n"
+        "- Maintain rhythmic, poetic flow throughout."
+    )
 
     url = "https://openrouter.ai/api/v1/chat/completions"
     headers = {
@@ -66,11 +56,11 @@ def get_spiritual_drip():
         "HTTP-Referer": "https://github.com/burakaza27-ops/daily-drip-",
     }
     
-    # በOpenRouter ላይ በአሁኑ ሰዓት በትክክል የሚሰሩ ሞዴሎች
+    # በOpenRouter ላይ ይበልጥ አስተማማኝ የሆኑ ሞዴሎች
     models_to_try = [
         "google/gemini-2.0-flash-001",
         "google/gemini-flash-1.5",
-        "anthropic/claude-3-haiku" # ጌሚናይ ባይሰራ ክላውድ እንዲሞክር
+        "anthropic/claude-3-haiku" 
     ]
 
     for model_id in models_to_try:
@@ -79,7 +69,7 @@ def get_spiritual_drip():
             data = {
                 "model": model_id, 
                 "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.7
+                "temperature": 0.4 # ዝቅተኛ ማድረጉ ስህተትን ይቀንሳል
             }
             response = requests.post(url, headers=headers, json=data, timeout=30)
             result = response.json()
@@ -100,11 +90,13 @@ def get_spiritual_drip():
 def broadcast_to_groups():
     message = get_spiritual_drip()
     if not message:
-        print("CRITICAL: Failed to generate content. Please check your OpenRouter Key or balance.")
+        print("CRITICAL: Failed to generate content.")
         return
 
+    # አማራጭ፡ የBrookers Automation ምልክት መጨመር ከፈለግህ ከታች ያለውን መስመር ከኮሜንት አውጣው
+    # message = message + "\n\n✧—————✧\n**Brookers Automation**"
+
     token = os.getenv('TELEGRAM_TOKEN')
-    # በGitHub Secrets ውስጥ ያለው Chat ID -100 መጀመሩን አረጋግጥ
     chat_ids = os.getenv('TELEGRAM_CHAT_IDS', '').split(',')
 
     for chat_id in chat_ids:
@@ -123,7 +115,6 @@ def broadcast_to_groups():
             if res.status_code == 200:
                 print(f"Success! Delivered to {chat_id}")
             else:
-                # ማሳሰቢያ፡ ማርክዳውን (Markdown) ስህተት ካመጣ ያለ እሱ ይሞክራል
                 payload.pop("parse_mode")
                 requests.post(url, json=payload)
                 print(f"Delivered to {chat_id} (without Markdown)")
