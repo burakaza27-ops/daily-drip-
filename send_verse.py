@@ -54,7 +54,7 @@ class ThemeManager:
         return selected
 
 class AIGenerator:
-    """Handles prompt engineering, strict formatting, and Church Father quotes."""
+    """Handles prompt engineering, strict formatting, and long-form spiritual content."""
     
     def __init__(self):
         self.api_key = os.getenv("GEMINI_API_KEY")
@@ -79,14 +79,17 @@ STRICT TELEGRAM HTML RULES:
 2. DO NOT output the text string '\\n'. 
 3. DO NOT use Markdown (**). Use ONLY <b> and <blockquote>.
 4. SPACING: You MUST leave TWO COMPLETELY EMPTY LINES between every section.
+5. LENGTH: Be verbose and detailed. Provide deep spiritual analysis.
 
 ROLE: Distinguished Spiritual Father (ሊቀ ሊቃውንት) of the EOTC.
 TARGET: Sunday School youth (የሃይማኖት ማኅቶት አብሪዎች).
+STYLE: Majestic, Poetic, and Deep. Use rich Ge'ez-influenced Amharic.
 SESSION: {unique_id} | THEME: {theme}
 
-MANDATORY STRUCTURE (Ensure large vertical gaps):
+MANDATORY STRUCTURE:
 
 <b>1. 🏛️ የሰማያዊ ጥበብ መክፈቻ:</b>
+Select a high-impact verse.
 <blockquote><b>[Verse Text]</b> — [Book] [Chapter:Verse]</blockquote>
 
 
@@ -94,25 +97,29 @@ MANDATORY STRUCTURE (Ensure large vertical gaps):
 
 
 <b>2. ☦️ የቅዱሳን አባቶች የብርሃን ማዕድ:</b>
-You MUST name a specific EOTC Father (e.g. ቅዱስ ዮሐንስ አፈወርቅ, ቅዱስ ይስሐቅ ሶርያዊ, etc.) and provide their direct quote.
-Format: [Name] እንዲህ ይላል፦ <blockquote>[Father's Deep Quote]</blockquote>
+A) Name a specific Father (e.g. ቅዱስ ዮሐንስ አፈወርቅ).
+B) Provide their direct quote in a blockquote.
+C) CRITICAL: Write a LONG, detailed paragraph (5-7 sentences) explaining the 'ምሥጢር' (deep spiritual mystery) behind this quote and how it applies to our life today.
+<blockquote>[Father's Direct Quote]</blockquote>
+[Detailed Spiritual Analysis and Mystery Explanation]
 
 
 ✧—————✧
 
 
 <b>3. 🕊️ ለነገው የአጥቢያ ብርሃን:</b>
-[3 powerful sentences using 'ባለራዕይ', 'ጽኑዕ', 'መዝገበ ሃይማኖት']
+Provide a comprehensive challenge for the youth. Write a detailed guide (at least 6 powerful sentences) using keywords: 'ባለራዕይ', 'ጽኑዕ', 'መዝገበ ሃይማኖት', 'ተጋድሎ'. Make it inspiring and demanding of spiritual excellence.
 
 
 ✧—————✧
 
 
 <b>4. ✨ የዕለቱ ሐዋርያዊ ቡራኬ:</b>
-[Unique one-line blessing]"""
+[A unique, heavy, and majestic one-line blessing]"""
 
     def _validate_response(self, text: str) -> bool:
-        if len(text) < 300: return False
+        # መልእክቱ ረጅም መሆኑን (ቢያንስ 600 character) ያረጋግጣል
+        if len(text) < 600: return False
         required_emojis = ["🏛️", "☦️", "🕊️", "✨"]
         return all(emoji in text for emoji in required_emojis)
 
@@ -120,33 +127,32 @@ Format: [Name] እንዲህ ይላል፦ <blockquote>[Father's Deep Quote]</bloc
         prompt = self._build_prompt(theme)
         
         for model_id in self.models:
-            logging.info(f"Generating with {model_id}...")
+            logging.info(f"Generating detailed content with {model_id}...")
             payload = {
                 "model": model_id, 
                 "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.85,
-                "presence_penalty": 0.8,
-                "frequency_penalty": 0.8 
+                "temperature": 0.88, # Slightly higher for more creative/longer output
+                "presence_penalty": 0.85,
+                "frequency_penalty": 0.85 
             }
             
             try:
-                res = self.session.post(self.url, json=payload, timeout=50)
+                res = self.session.post(self.url, json=payload, timeout=60)
                 res.raise_for_status()
                 content = res.json().get("choices", [{}])[0].get("message", {}).get("content", "").strip()
                 
                 # --- FORMATTING PROTECTION ---
                 content = content.replace('\\n', '\n').replace('\\\\n', '\n')
-                content = re.sub(r'\n{4,}', '\n\n\n', content) # Normalize whitespace
-                content = content.replace('**', '') # Double check for markdown
+                content = re.sub(r'\n{4,}', '\n\n\n', content) 
+                content = content.replace('**', '') 
                 
                 if self._validate_response(content):
                     return content
-                logging.warning(f"{model_id} failed validation.")
+                logging.warning(f"{model_id} output was too short or invalid. Retrying...")
             except Exception as e:
                 logging.error(f"Error with {model_id}: {e}")
             
             time.sleep(2)
-            
         return None
 
 class TelegramBroadcaster:
@@ -164,33 +170,26 @@ class TelegramBroadcaster:
         return text.strip()
 
     def broadcast(self, message: str) -> None:
-        if not self.chat_ids:
-            logging.error("No Telegram Chat IDs configured.")
-            return
-
+        if not self.chat_ids: return
         clean_message = self._sanitize_output(message)
-
         for chat_id in self.chat_ids:
             payload = {
-                "chat_id": chat_id, 
-                "text": clean_message,
-                "parse_mode": "HTML",
-                "disable_web_page_preview": True
+                "chat_id": chat_id, "text": clean_message,
+                "parse_mode": "HTML", "disable_web_page_preview": True
             }
-            
             try:
-                res = requests.post(self.api_url, json=payload, timeout=20)
+                res = requests.post(self.api_url, json=payload, timeout=25)
                 if res.status_code == 200:
                     logging.info(f"Broadcast successful to: {chat_id}")
                 else:
-                    logging.warning(f"HTML error for {chat_id}. Sending plain text fallback.")
+                    logging.warning(f"HTML error. Falling back to plain text.")
                     payload.pop("parse_mode")
-                    requests.post(self.api_url, json=payload, timeout=20)
+                    requests.post(self.api_url, json=payload, timeout=25)
             except Exception as e:
-                logging.error(f"Delivery failed for {chat_id}: {e}")
+                logging.error(f"Delivery failure: {e}")
 
 def main():
-    logging.info("Starting Spiritual Drip Orchestrator (Complete Version)...")
+    logging.info("Starting High-Detail Spiritual Drip Orchestrator...")
     theme_mgr = ThemeManager()
     ai_gen = AIGenerator()
     broadcaster = TelegramBroadcaster()
@@ -200,9 +199,9 @@ def main():
     
     if final_content:
         broadcaster.broadcast(final_content)
-        logging.info("Drip session completed successfully.")
+        logging.info("Deep-dive drip session completed.")
     else:
-        logging.critical("No content generated.")
+        logging.critical("Failed to generate deep-form content.")
 
 if __name__ == "__main__":
     main()
