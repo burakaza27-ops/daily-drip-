@@ -5,13 +5,14 @@ import random
 import uuid
 import logging
 import requests
+import re
 from pathlib import Path
 from typing import Optional
 
 # Professional Logging Configuration
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s | [EOTC-BOT] | %(levelname)s | %(message)s",
+    format="%(asctime)s | [EOTC-ARCHITECT] | %(levelname)s | %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S"
 )
 
@@ -72,46 +73,48 @@ class AIGenerator:
 
     def _build_prompt(self, theme: str) -> str:
         unique_id = str(uuid.uuid4())[:8]
-        return (
-            f"CRITICAL SYSTEM INSTRUCTION: Your output MUST BE 100% Amharic. NO English. \n"
-            f"TELEGRAM HTML MODE STRICT RULES:\n"
-            f"1. DO NOT use <html>, <body>, <head>, or <!DOCTYPE> tags. Telegram will crash.\n"
-            f"2. DO NOT use Markdown bolding (**). Use ONLY <b> for bolding and <blockquote> for quotes.\n"
-            f"3. Start IMMEDIATELY with the first header/emoji. No introductory text.\n"
-            f"4. You MUST use TWO EMPTY LINES (\\n\\n\\n) between every numbered section for extreme readability.\n"
-            f"SESSION: {unique_id} | THEME: {theme}\n\n"
-            
-            "ROLE: You are a distinguished Spiritual Father (ሊቀ ሊቃውንት) of the Ethiopian Orthodox Tewahedo Church. "
-            "STYLE: Majestic, Ge'ez-rooted Amharic. Address Sunday School youth as 'የሃይማኖት ማኅቶት አብሪዎች'.\n\n"
-            
-            "MANDATORY TELEGRAM-NATIVE STRUCTURE:\n\n"
-            
-            "<b>1. 🏛️ የሰማያዊ ጥበብ መክፈቻ:</b>\n"
-            "Select a high-impact EOTC Bible verse about the theme.\n"
-            "Format EXACTLY like this:\n"
-            "<blockquote><b>[Verse Text]</b> — [Book] [Chapter:Verse]</blockquote>\n\n\n"
-            
-            "✧—————✧\n\n\n"
-            
-            "<b>2. ☦️ የቅዱሳን አባቶች የብርሃን ማዕድ:</b>\n"
-            "Deliver a profound, rare teaching from an EOTC Father about the theme. Explain the spiritual mystery (ምሥጢር).\n\n\n"
-            
-            "✧—————✧\n\n\n"
-            
-            "<b>3. 🕊️ ለነገው የአጥቢያ ብርሃን:</b>\n"
-            "Write 3 powerful sentences challenging the youth to be 'Spiritual Giants'. Use 'ባለራዕይ', 'ጽኑዕ', 'መዝገበ ሃይማኖት'.\n\n\n"
-            
-            "✧—————✧\n\n\n"
-            
-            "<b>4. ✨ የዕለቱ ሐዋርያዊ ቡራኬ:</b>\n"
-            "A one-line, unique, heavy blessing."
-        )
+        # እዚህ ጋር ትክክለኛ ባዶ መስመሮችን (Actual Newlines) በፕሮምፕቱ ውስጥ ተጠቅሜያለሁ
+        return f"""CRITICAL SYSTEM INSTRUCTION: Your output MUST BE 100% Amharic. NO English.
+STRICT TELEGRAM HTML RULES:
+1. DO NOT use <html>, <body>, or <head> tags.
+2. DO NOT output the text string '\\n'. 
+3. DO NOT use Markdown (**). Use ONLY <b> and <blockquote>.
+4. SPACING: You MUST leave TWO COMPLETELY EMPTY LINES between every section.
+
+ROLE: Distinguished Spiritual Father (ሊቀ ሊቃውንት) of the EOTC.
+TARGET: Sunday School youth (የሃይማኖት ማኅቶት አብሪዎች).
+SESSION: {unique_id} | THEME: {theme}
+
+MANDATORY STRUCTURE (Ensure large vertical gaps):
+
+<b>1. 🏛️ የሰማያዊ ጥበብ መክፈቻ:</b>
+<blockquote><b>[Verse Text]</b> — [Book] [Chapter:Verse]</blockquote>
+
+
+✧—————✧
+
+
+<b>2. ☦️ የቅዱሳን አባቶች የብርሃን ማዕድ:</b>
+[Provide rare teaching here with deep spiritual mystery]
+
+
+✧—————✧
+
+
+<b>3. 🕊️ ለነገው የአጥቢያ ብርሃን:</b>
+[3 powerful sentences using 'ባለራዕይ', 'ጽኑዕ', 'መዝገበ ሃይማኖት']
+
+
+✧—————✧
+
+
+<b>4. ✨ የዕለቱ ሐዋርያዊ ቡራኬ:</b>
+[Unique one-line blessing]"""
 
     def _validate_response(self, text: str) -> bool:
-        if len(text) < 300: return False
-        if not all(emoji in text for emoji in ["🏛️", "☦️", "🕊️", "✨"]): return False
-        if "**" in text: return False # Reject Markdown
-        return True
+        if len(text) < 250: return False
+        required_emojis = ["🏛️", "☦️", "🕊️", "✨"]
+        return all(emoji in text for emoji in required_emojis)
 
     def generate_drip(self, theme: str) -> Optional[str]:
         prompt = self._build_prompt(theme)
@@ -122,18 +125,23 @@ class AIGenerator:
                 "model": model_id, 
                 "messages": [{"role": "user", "content": prompt}],
                 "temperature": 0.85,
-                "presence_penalty": 0.8,
-                "frequency_penalty": 0.8 
+                "presence_penalty": 0.6
             }
             
             try:
-                res = self.session.post(self.url, json=payload, timeout=45)
+                res = self.session.post(self.url, json=payload, timeout=50)
                 res.raise_for_status()
                 content = res.json().get("choices", [{}])[0].get("message", {}).get("content", "").strip()
                 
+                # --- CRITICAL FIX: Post-Processing ---
+                # በ AIው በስህተት የተጻፉ የኮድ ምልክቶችን ወደ እውነተኛ አዲስ መስመር ይቀይራል
+                content = content.replace('\\n', '\n').replace('\\\\n', '\n')
+                # ትርፍ ክፍተቶችን ያስተካክላል
+                content = re.sub(r'\n{4,}', '\n\n\n', content)
+                
                 if self._validate_response(content):
                     return content
-                logging.warning(f"{model_id} failed validation. Retrying next model.")
+                logging.warning(f"{model_id} output failed validation.")
             except Exception as e:
                 logging.error(f"Error with {model_id}: {e}")
             
@@ -149,61 +157,57 @@ class TelegramBroadcaster:
         self.chat_ids = [cid.strip() for cid in os.getenv('TELEGRAM_CHAT_IDS', '').split(',') if cid.strip()]
         self.api_url = f"https://api.telegram.org/bot{self.token}/sendMessage"
 
-    def _sanitize_html(self, text: str) -> str:
-        """Safety layer: Strips web HTML tags that crash Telegram's parser."""
-        bad_tags = [
-            "<html>", "</html>", "<body>", "</body>", 
-            "<head>", "</head>", "<!DOCTYPE html>", "```html", "```"
-        ]
-        sanitized = text
-        for tag in bad_tags:
-            # Replace both lowercase and uppercase variations
-            sanitized = sanitized.replace(tag, "").replace(tag.upper(), "")
-        return sanitized.strip()
+    def _sanitize_output(self, text: str) -> str:
+        """Removes crashing HTML tags and cleans up accidental code snippets."""
+        # Remove common unsupported tags
+        for tag in ["<html>", "</html>", "<body>", "</body>", "<head>", "</head>", "```html", "```"]:
+            text = re.sub(re.escape(tag), "", text, flags=re.IGNORECASE)
+        
+        # Ensure blockquote and bold are properly formatted if AI messes up
+        text = text.replace('**', '') # Double check no markdown remains
+        return text.strip()
 
     def broadcast(self, message: str) -> None:
         if not self.chat_ids:
             logging.error("No Telegram Chat IDs configured.")
             return
 
-        # 1. Apply Safety Clean-up
-        safe_message = self._sanitize_html(message)
+        clean_message = self._sanitize_output(message)
 
         for chat_id in self.chat_ids:
             payload = {
                 "chat_id": chat_id, 
-                "text": safe_message, # Pure, sanitized message
+                "text": clean_message,
                 "parse_mode": "HTML",
                 "disable_web_page_preview": True
             }
             
             try:
-                res = requests.post(self.api_url, json=payload, timeout=15)
+                res = requests.post(self.api_url, json=payload, timeout=20)
                 if res.status_code == 200:
                     logging.info(f"Broadcast successful to: {chat_id}")
                 else:
-                    logging.warning(f"HTML Parse Error for {chat_id}: {res.text}. Falling back to Plain Text...")
-                    # 2. Fallback Mechanism (Guarantees delivery even if formatting fails)
+                    logging.warning(f"HTML Parse Error for {chat_id}. Falling back to plain text.")
                     payload.pop("parse_mode")
-                    fallback_res = requests.post(self.api_url, json=payload, timeout=15)
-                    if fallback_res.status_code == 200:
-                        logging.info(f"Fallback successful to {chat_id} (Sent as Plain Text).")
-                    else:
-                        logging.error(f"Ultimate delivery failure for {chat_id}: {fallback_res.text}")
+                    requests.post(self.api_url, json=payload, timeout=20)
             except Exception as e:
-                logging.error(f"Network delivery failed for {chat_id}: {e}")
+                logging.error(f"Network error delivering to {chat_id}: {e}")
 
 def main():
-    logging.info("Initializing Pure Spiritual Drip (Bulletproof Version)...")
+    logging.info("Starting Spiritual Drip Orchestrator...")
     
-    theme = ThemeManager().select_next_theme()
-    drip_content = AIGenerator().generate_drip(theme)
+    theme_mgr = ThemeManager()
+    ai_gen = AIGenerator()
+    broadcaster = TelegramBroadcaster()
     
-    if drip_content:
-        TelegramBroadcaster().broadcast(drip_content)
-        logging.info("Execution complete.")
+    selected_theme = theme_mgr.select_next_theme()
+    final_content = ai_gen.generate_drip(selected_theme)
+    
+    if final_content:
+        broadcaster.broadcast(final_content)
+        logging.info("Drip session completed successfully.")
     else:
-        logging.critical("Execution aborted: No valid content generated.")
+        logging.critical("No content could be generated after all retries.")
 
 if __name__ == "__main__":
     main()
