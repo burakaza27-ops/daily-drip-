@@ -2,25 +2,32 @@ name: Daily Spiritual Drip
 
 on:
   schedule:
-    - cron: '0 5 * * *'
-  workflow_dispatch:
+    - cron: '0 5 * * *' # በየቀኑ በኢትዮጵያ አቆጣጠር 11:00 AM አካባቢ
+  workflow_dispatch: # በእጅህ ለመሞከር እንዲመችህ
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    # GitHub Action ፋይል እንዲጽፍና Push እንዲያደርግ ፍቃድ መስጠት
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # ታሪኩን በሙሉ እንዲያነበው
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11' # ወደ 3.11 ከፍ ተደርጓል
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          pip install google-genai requests # አዲሱ የ 2026 ላይብረሪ
+          python -m pip install --upgrade pip
+          pip install requests
 
       - name: Run Spiritual Drip Script
         env:
@@ -28,3 +35,13 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
         run: python send_verse.py
+
+      - name: Save and Commit Theme State
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          # ፋይሉ ከሌለ ባዶ እንዲፈጥረው (ለመጀመሪያ ጊዜ ብቻ)
+          if [ ! -f theme_state.json ]; then echo "{}" > theme_state.json; fi
+          git add theme_state.json
+          git commit -m "Update theme state [skip ci]" || echo "No changes to commit"
+          git push
