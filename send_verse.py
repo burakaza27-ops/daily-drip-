@@ -4,7 +4,7 @@ import requests
 
 def get_spiritual_drip():
     # OpenRouter API settings
-    openrouter_key = os.getenv("GEMINI_API_KEY") # ስሙን በ GitHub ላይ ላለመቀየር Gemini_API_KEY ውስጥ የ OpenRouter Keyህን ክተተው
+    openrouter_key = os.getenv("GEMINI_API_KEY") 
     
     prompt = (
         "You are a wise spiritual mentor. Generate a daily 'Spiritual Drip' message ENTIRELY IN AMHARIC. "
@@ -15,12 +15,13 @@ def get_spiritual_drip():
     url = "https://openrouter.ai/api/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {openrouter_key}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://github.com/burakaza27-ops/daily-drip-", # ለ OpenRouter አስፈላጊ ነው
     }
     
-    # ነፃ እና ፈጣን የሆነውን የ Gemini ሞዴል በ OpenRouter በኩል እንጠቀማለን
+    # ይበልጥ አስተማማኝ የሆነውን ሞዴል እንጠቀም
     data = {
-        "model": "google/gemini-2.0-flash-lite:free", 
+        "model": "google/gemini-2.0-flash:free", 
         "messages": [{"role": "user", "content": prompt}]
     }
 
@@ -32,6 +33,8 @@ def get_spiritual_drip():
                 return result["choices"][0]["message"]["content"]
             else:
                 print(f"OpenRouter Error: {result}")
+                # 'lite' ስላልሰራ ወደ ዋናው flash እንቀይረው
+                data["model"] = "google/gemini-2.0-flash" 
         except Exception as e:
             print(f"Attempt {attempt + 1} failed: {e}")
             time.sleep(5)
