@@ -8,10 +8,10 @@ import requests
 from pathlib import Path
 from typing import Optional
 
-# Lean, Professional Logging Configuration
+# Professional Logging Configuration
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s | [EOTC-DRIP] | %(levelname)s | %(message)s",
+    format="%(asctime)s | [EOTC-BOT] | %(levelname)s | %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S"
 )
 
@@ -73,37 +73,37 @@ class AIGenerator:
     def _build_prompt(self, theme: str) -> str:
         unique_id = str(uuid.uuid4())[:8]
         return (
-            f"CRITICAL INSTRUCTION: Output MUST BE 100% Amharic. NO English. NO Markdown (**). "
-            f"Use ONLY HTML tags. SESSION: {unique_id} | THEME: {theme}\n\n"
+            f"CRITICAL SYSTEM INSTRUCTION: Your output MUST BE 100% Amharic. NO English. \n"
+            f"TELEGRAM HTML MODE STRICT RULES:\n"
+            f"1. DO NOT use <html>, <body>, <head>, or <!DOCTYPE> tags. Telegram will crash.\n"
+            f"2. DO NOT use Markdown bolding (**). Use ONLY <b> for bolding and <blockquote> for quotes.\n"
+            f"3. Start IMMEDIATELY with the first header/emoji. No introductory text.\n"
+            f"4. You MUST use TWO EMPTY LINES (\\n\\n\\n) between every numbered section for extreme readability.\n"
+            f"SESSION: {unique_id} | THEME: {theme}\n\n"
             
             "ROLE: You are a distinguished Spiritual Father (ሊቀ ሊቃውንት) of the Ethiopian Orthodox Tewahedo Church. "
             "STYLE: Majestic, Ge'ez-rooted Amharic. Address Sunday School youth as 'የሃይማኖት ማኅቶት አብሪዎች'.\n\n"
             
-            "SPACING RULE (ABSOLUTE PRIORITY): You MUST insert exactly TWO empty lines between every single section and before/after the ✧—————✧ separator. The output must be airy and highly readable.\n\n"
-            
-            "MANDATORY HTML STRUCTURE:\n\n"
+            "MANDATORY TELEGRAM-NATIVE STRUCTURE:\n\n"
             
             "<b>1. 🏛️ የሰማያዊ ጥበብ መክፈቻ:</b>\n"
-            "<br>\n"
-            f"Select a high-impact EOTC Bible verse about '{theme}'.\n"
-            "Format exactly like this: <blockquote><b>[Verse Text]</b> — [Book] [Chapter:Verse]</blockquote>\n\n\n"
+            "Select a high-impact EOTC Bible verse about the theme.\n"
+            "Format EXACTLY like this:\n"
+            "<blockquote><b>[Verse Text]</b> — [Book] [Chapter:Verse]</blockquote>\n\n\n"
             
             "✧—————✧\n\n\n"
             
             "<b>2. ☦️ የቅዱሳን አባቶች የብርሃን ማዕድ:</b>\n"
-            "<br>\n"
-            f"Deliver a profound, rare teaching from an EOTC Father about '{theme}'. Explain the spiritual mystery (ምሥጢር).\n\n\n"
+            "Deliver a profound, rare teaching from an EOTC Father about the theme. Explain the spiritual mystery (ምሥጢር).\n\n\n"
             
             "✧—————✧\n\n\n"
             
             "<b>3. 🕊️ ለነገው የአጥቢያ ብርሃን:</b>\n"
-            "<br>\n"
             "Write 3 powerful sentences challenging the youth to be 'Spiritual Giants'. Use 'ባለራዕይ', 'ጽኑዕ', 'መዝገበ ሃይማኖት'.\n\n\n"
             
             "✧—————✧\n\n\n"
             
             "<b>4. ✨ የዕለቱ ሐዋርያዊ ቡራኬ:</b>\n"
-            "<br>\n"
             "A one-line, unique, heavy blessing."
         )
 
@@ -142,22 +142,37 @@ class AIGenerator:
         return None
 
 class TelegramBroadcaster:
-    """Handles clean, direct HTML broadcasting to Telegram."""
+    """Handles safe, sanitized, direct HTML broadcasting to Telegram."""
     
     def __init__(self):
         self.token = os.getenv('TELEGRAM_TOKEN')
         self.chat_ids = [cid.strip() for cid in os.getenv('TELEGRAM_CHAT_IDS', '').split(',') if cid.strip()]
         self.api_url = f"https://api.telegram.org/bot{self.token}/sendMessage"
 
+    def _sanitize_html(self, text: str) -> str:
+        """Safety layer: Strips web HTML tags that crash Telegram's parser."""
+        bad_tags = [
+            "<html>", "</html>", "<body>", "</body>", 
+            "<head>", "</head>", "<!DOCTYPE html>", "```html", "```"
+        ]
+        sanitized = text
+        for tag in bad_tags:
+            # Replace both lowercase and uppercase variations
+            sanitized = sanitized.replace(tag, "").replace(tag.upper(), "")
+        return sanitized.strip()
+
     def broadcast(self, message: str) -> None:
         if not self.chat_ids:
             logging.error("No Telegram Chat IDs configured.")
             return
 
+        # 1. Apply Safety Clean-up
+        safe_message = self._sanitize_html(message)
+
         for chat_id in self.chat_ids:
             payload = {
                 "chat_id": chat_id, 
-                "text": message, # Pure message injection, no appended signature
+                "text": safe_message, # Pure, sanitized message
                 "parse_mode": "HTML",
                 "disable_web_page_preview": True
             }
@@ -167,12 +182,19 @@ class TelegramBroadcaster:
                 if res.status_code == 200:
                     logging.info(f"Broadcast successful to: {chat_id}")
                 else:
-                    logging.error(f"Telegram API Error for {chat_id}: {res.text}")
+                    logging.warning(f"HTML Parse Error for {chat_id}: {res.text}. Falling back to Plain Text...")
+                    # 2. Fallback Mechanism (Guarantees delivery even if formatting fails)
+                    payload.pop("parse_mode")
+                    fallback_res = requests.post(self.api_url, json=payload, timeout=15)
+                    if fallback_res.status_code == 200:
+                        logging.info(f"Fallback successful to {chat_id} (Sent as Plain Text).")
+                    else:
+                        logging.error(f"Ultimate delivery failure for {chat_id}: {fallback_res.text}")
             except Exception as e:
-                logging.error(f"Delivery failed for {chat_id}: {e}")
+                logging.error(f"Network delivery failed for {chat_id}: {e}")
 
 def main():
-    logging.info("Initializing Pure Spiritual Drip...")
+    logging.info("Initializing Pure Spiritual Drip (Bulletproof Version)...")
     
     theme = ThemeManager().select_next_theme()
     drip_content = AIGenerator().generate_drip(theme)
