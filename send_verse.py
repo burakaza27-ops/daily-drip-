@@ -1,125 +1,220 @@
 import os
 import time
+import json
+import random
+import uuid
+import logging
 import requests
+from pathlib import Path
+from typing import Optional, List
 
-def get_spiritual_drip():
-    openrouter_key = os.getenv("GEMINI_API_KEY") 
+# Advanced Logging Configuration
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - [EOTC-DRIP-BOT] - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+
+class ThemeManager:
+    """Manages thematic states to ensure no consecutive repetitions."""
     
-    # UPDATED: Perfect, Detailed & Sunday School Focused Prompt
-    prompt = (
-        "STRICT INSTRUCTION: Your response must be 100% in AMHARIC (Ethiopic Script). "
-        "DO NOT include any English words, introductions, or conclusions. "
-        "Begin immediately with the first emoji. Avoid inventing words; use standard EOTC Amharic.\n\n"
+    def __init__(self, state_file: str = "theme_state.json"):
+        self.state_file = Path(state_file)
+        self.themes = [
+            "ትዕግስትና ተስፋ", "መለኮታዊ ፍቅር", "ትሕትናና የልብ የዋህነት", "የጸሎት ኃይል", 
+            "መንፈሳዊ ትጋት", "የልቦና ንጽሕና", "ቅዱስ አገልግሎት", "ጽኑዕ እምነት", 
+            "ምጽዋትና ርኅራኄ", "ዝምታና ማስተዋል", "እውነተኛ ንስሐ", "የምስጋና ሕይወት",
+            "ሰማያዊ ጥበብ", "ክርስቲያናዊ ጽናት", "የእግዚአብሔር ረዳትነት", "የቅዱሳን አማላጅነት", 
+            "መንፈሳዊ ማዕረግ", "ሰላመ ልቦና", "የዘመን አጠቃቀም", "ትሕትና በምግባር", 
+            "የነፍስ ተጋድሎ", "የወጣትነት ቅድስና", "የቤተክርስቲያን ፍቅር"
+        ]
 
-        "CONTEXT: You are a venerable Spiritual Father and Scholar of the EOTC, "
-        "mentoring dedicated youth in the Sunday School (ሰንበት ትምህርት ቤት). "
-        "Your voice carries authority and divine illumination.\n\n"
+    def get_last_theme(self) -> Optional[str]:
+        if self.state_file.exists():
+            try:
+                with open(self.state_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    return data.get("last_theme")
+            except Exception as e:
+                logging.error(f"Error reading state file: {e}")
+        return None
 
-        "TARGET: Sunday School students (ወጣቶች) balancing life with sacred service (አገልግሎት). "
-        "Speak as one who forms souls through faith and inner vigilance.\n\n"
-
-        "STRUCTURE (Follow exactly):\n\n"
-
-        "1. 🏛️ የሰማያዊ ጥበብ መክፈቻ:\n"
-        "Select a profound Bible verse (መዝሙረ ዳዊት, ወንጌል,ሃዲስ ኪዳን, ብሉይ ኪዳን or ነቢያት) regarding 'Service' (አገልግሎት), moving verses, salvation related, general verses or 'Youthful Purity'. "
-        "Format: **[Verse Text in Bold]** — [መጽሐፍ ስም] [ምዕራፍ:ቁጥር].\n\n"
-
-        "✧—————✧\n\n"
-
-        "2. ☦️ የቅዱሳን አባቶች የብርሃን ማዕድ:\n"
-        "Present a deep teaching from an EOTC Father (e.g., St. Yared, St. Isaac the Syrian, St. John Chrysostom) "
-        "about the beauty of serving God in youth and spiritual education. "
-        "Mention the Father's name with honor.\n\n"
-
-        "✧—————✧\n\n"
-
-        "3. 🕊️ ለነገው የአጥቢያ ብርሃን:\n"
-        "Write 3–4 powerful sentences addressing the Sunday School student directly. "
-        "Use terms like **አገልጋይ**, **የቤተክርስቲያን ተስፋ**, **ጽኑዕ**, **ብርሃን**. "
-        "Encourage their commitment to the Church as a sacred path.\n\n"
-
-        "✧—————✧\n\n"
-
-        "4. ✨ የዕለቱ ሐዋርያዊ ቡራኬ:\n"
-        "Deliver one powerful blessing for their service, family, and spiritual journey.\n\n"
-
-        "FINAL REQUIREMENTS:\n"
-        "- Use rich, Ge’ez-rooted Amharic vocabulary.\n"
-        "- NO spelling errors in Ethiopic characters.\n"
-        "- Maintain rhythmic, poetic flow throughout."
-    )
-
-    url = "https://openrouter.ai/api/v1/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {openrouter_key}",
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://github.com/burakaza27-ops/daily-drip-",
-    }
-    
-    # በOpenRouter ላይ ይበልጥ አስተማማኝ የሆኑ ሞዴሎች
-    models_to_try = [
-        "google/gemini-2.0-flash-001",
-        "google/gemini-flash-1.5",
-        "anthropic/claude-3-haiku" 
-    ]
-
-    for model_id in models_to_try:
+    def save_last_theme(self, theme: str) -> None:
         try:
-            print(f"Trying to generate with: {model_id}...")
-            data = {
+            with open(self.state_file, 'w', encoding='utf-8') as f:
+                json.dump({"last_theme": theme, "timestamp": time.time()}, f, ensure_ascii=False)
+        except Exception as e:
+            logging.error(f"Error saving state file: {e}")
+
+    def select_next_theme(self) -> str:
+        last_theme = self.get_last_theme()
+        available_themes = [t for t in self.themes if t != last_theme]
+        selected = random.choice(available_themes)
+        self.save_last_theme(selected)
+        logging.info(f"Selected Theme: {selected} (Previous: {last_theme})")
+        return selected
+
+
+class AIGenerator:
+    """Handles prompt engineering, model failover, and output validation."""
+    
+    def __init__(self):
+        self.api_key = os.getenv("GEMINI_API_KEY")
+        self.url = "https://openrouter.ai/api/v1/chat/completions"
+        self.models = [
+            "google/gemini-2.0-flash-001", 
+            "anthropic/claude-3-haiku", 
+            "google/gemini-flash-1.5"
+        ]
+        # Use a Session for connection pooling (faster & more efficient)
+        self.session = requests.Session()
+        self.session.headers.update({
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://github.com/burakaza27-ops/daily-drip-",
+        })
+
+    def _build_prompt(self, theme: str) -> str:
+        unique_id = str(uuid.uuid4())[:8]
+        return (
+            f"CRITICAL INSTRUCTION: Your output MUST BE 100% Amharic. NO English words. NO Markdown bolding (**). "
+            f"Use ONLY HTML tags for formatting like <b>bold</b> or <blockquote>quotes</blockquote>.\n"
+            f"SESSION_ID: {unique_id} | MASTER_THEME: {theme}\n\n"
+            
+            "ROLE: You are a distinguished, highly learned Spiritual Father (ሊቀ ሊቃውንት) of the Ethiopian Orthodox Tewahedo Church. "
+            "STYLE GUIDE: Your vocabulary must be rooted in Ge'ez and high-level Amharic (e.g., use 'መንፈሳዊ ተጋድሎ', 'ማኅቶት', 'ምሥጢር'). "
+            "Do not use repetitive, modern casual phrasing. Speak with majestic, fatherly weight.\n\n"
+            
+            "TARGET: Sunday School (ሰንበት ትምህርት ቤት) servants and youth. Address them as 'The Torchbearers of the Faith' (የሃይማኖት ማኅቶት አብሪዎች).\n\n"
+            
+            "MANDATORY HTML STRUCTURE (Do not deviate):\n"
+            "<b>1. 🏛️ የሰማያዊ ጥበብ መክፈቻ:</b>\n"
+            f"Select a high-impact, verified Bible verse (EOTC Canon) focused on '{theme}'. "
+            "Format: <blockquote><b>[Verse Text]</b> — [Book] [Chapter:Verse]</blockquote>\n"
+            "✧—————✧\n"
+            "<b>2. ☦️ የቅዱሳን አባቶች የብርሃን ማዕድ:</b>\n"
+            f"Deliver a profound, poetic, and rare teaching from an EOTC Father (e.g., St. Yared, Mar Isaac) about '{theme}'. "
+            "Explain the spiritual mystery (ምሥጢር) behind it in a way that creates 'Jaw-Dropping' realization.\n"
+            "✧—————✧\n"
+            "<b>3. 🕊️ ለነገው የአጥቢያ ብርሃን:</b>\n"
+            "Write 3-4 powerful, high-end sentences specifically for Sunday School youth. "
+            "Challenge them to be 'Spiritual Giants'. Use words like 'ባለራዕይ', 'ጽኑዕ', 'መዝገበ ሃይማኖት'.\n"
+            "✧—————✧\n"
+            "<b>4. ✨ የዕለቱ ሐዋርያዊ ቡራኬ:</b>\n"
+            "A one-line, unique, and heavy blessing that resonates with their service."
+        )
+
+    def _validate_response(self, text: str) -> bool:
+        """Ensures the AI output meets our strict quality standards."""
+        if len(text) < 300:
+            logging.warning("Validation Failed: Output too short.")
+            return False
+        required_emojis = ["🏛️", "☦️", "🕊️", "✨"]
+        if not all(emoji in text for emoji in required_emojis):
+            logging.warning("Validation Failed: Missing structural emojis.")
+            return False
+        if "**" in text:
+            logging.warning("Validation Failed: AI used Markdown instead of HTML.")
+            return False
+        return True
+
+    def generate_drip(self, theme: str) -> Optional[str]:
+        prompt = self._build_prompt(theme)
+        
+        for model_id in self.models:
+            logging.info(f"Attempting generation with {model_id}...")
+            payload = {
                 "model": model_id, 
                 "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.4 # ዝቅተኛ ማድረጉ ስህተትን ይቀንሳል
+                "temperature": 0.85, # Slightly lowered to keep theological accuracy tight
+                "presence_penalty": 0.8,
+                "frequency_penalty": 0.8 
             }
-            response = requests.post(url, headers=headers, json=data, timeout=30)
-            result = response.json()
             
-            if "choices" in result:
-                content = result["choices"][0]["message"]["content"]
-                print(f"Successfully generated using {model_id}!")
-                return content
-            else:
-                error_msg = result.get('error', {}).get('message', 'Unknown error')
-                print(f"Model {model_id} failed: {error_msg}")
-        except Exception as e:
-            print(f"Connection error with {model_id}: {e}")
-            time.sleep(2)
+            try:
+                response = self.session.post(self.url, json=payload, timeout=45)
+                response.raise_for_status()
+                result = response.json()
+                
+                if "choices" in result:
+                    content = result["choices"][0]["message"]["content"].strip()
+                    if self._validate_response(content):
+                        logging.info(f"Success! {model_id} delivered a validated masterpiece.")
+                        return content
+                    else:
+                        logging.warning(f"Model {model_id} output rejected by validation layer.")
+                        
+            except requests.exceptions.RequestException as e:
+                logging.error(f"Network error with {model_id}: {e}")
+            except Exception as e:
+                logging.error(f"Unexpected error with {model_id}: {e}")
             
-    return None
-
-def broadcast_to_groups():
-    message = get_spiritual_drip()
-    if not message:
-        print("CRITICAL: Failed to generate content.")
-        return
-
-    # አማራጭ፡ የBrookers Automation ምልክት መጨመር ከፈለግህ ከታች ያለውን መስመር ከኮሜንት አውጣው
-    # message = message + "\n\n✧—————✧\n**Brookers Automation**"
-
-    token = os.getenv('TELEGRAM_TOKEN')
-    chat_ids = os.getenv('TELEGRAM_CHAT_IDS', '').split(',')
-
-    for chat_id in chat_ids:
-        chat_id = chat_id.strip()
-        if not chat_id: continue
+            time.sleep(3) # Brief pause before failover
             
-        url = f"https://api.telegram.org/bot{token}/sendMessage"
-        payload = {
-            "chat_id": chat_id, 
-            "text": message, 
-            "parse_mode": "Markdown"
-        }
-        
-        try:
-            res = requests.post(url, json=payload, timeout=15)
-            if res.status_code == 200:
-                print(f"Success! Delivered to {chat_id}")
-            else:
-                payload.pop("parse_mode")
-                requests.post(url, json=payload)
-                print(f"Delivered to {chat_id} (without Markdown)")
-        except Exception as e:
-            print(f"Network Error: {e}")
+        logging.critical("All models failed to produce a valid response.")
+        return None
+
+
+class TelegramBroadcaster:
+    """Handles dispatching HTML formatted messages to Telegram."""
+    
+    def __init__(self):
+        self.token = os.getenv('TELEGRAM_TOKEN')
+        chat_ids_str = os.getenv('TELEGRAM_CHAT_IDS', '')
+        self.chat_ids = [cid.strip() for cid in chat_ids_str.split(',') if cid.strip()]
+        self.api_url = f"https://api.telegram.org/bot{self.token}/sendMessage"
+
+    def broadcast(self, message: str) -> None:
+        if not self.chat_ids:
+            logging.error("No Telegram Chat IDs configured.")
+            return
+
+        # Professional Signature (HTML format)
+        final_message = message + "\n\n✧—————✧\n<b>በብሩክ አውቶሜሽን (Brookers) የቀረበ</b>"
+
+        for chat_id in self.chat_ids:
+            payload = {
+                "chat_id": chat_id, 
+                "text": final_message, 
+                "parse_mode": "HTML",
+                "disable_web_page_preview": True
+            }
+            
+            try:
+                res = requests.post(self.api_url, json=payload, timeout=20)
+                if res.status_code == 200:
+                    logging.info(f"Broadcast successful to Group: {chat_id}")
+                else:
+                    logging.error(f"Telegram API Error for {chat_id}: {res.text}")
+                    # Fallback to plain text if HTML parsing fails entirely
+                    payload.pop("parse_mode")
+                    requests.post(self.api_url, json=payload)
+                    logging.warning(f"Sent as plain text to {chat_id} due to HTML parse error.")
+            except Exception as e:
+                logging.error(f"Telegram delivery failed for {chat_id}: {e}")
+
+
+def main():
+    """Main Orchestration Flow"""
+    logging.info("Starting Daily Spiritual Drip Automation...")
+    
+    theme_manager = ThemeManager()
+    ai_generator = AIGenerator()
+    broadcaster = TelegramBroadcaster()
+    
+    # 1. Get State-Aware Theme
+    selected_theme = theme_manager.select_next_theme()
+    
+    # 2. Generate Content with Failover & Validation
+    drip_content = ai_generator.generate_drip(selected_theme)
+    
+    # 3. Broadcast
+    if drip_content:
+        broadcaster.broadcast(drip_content)
+    else:
+        logging.critical("Execution aborted: No valid content was generated.")
 
 if __name__ == "__main__":
-    broadcast_to_groups()
+    # Ensure environment variables are loaded if testing locally
+    # from dotenv import load_dotenv; load_dotenv()
+    main()
