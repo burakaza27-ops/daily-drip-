@@ -54,7 +54,7 @@ class ThemeManager:
         return selected
 
 class AIGenerator:
-    """Handles prompt engineering, strict formatting, and failover validation."""
+    """Handles prompt engineering, strict formatting, and Church Father quotes."""
     
     def __init__(self):
         self.api_key = os.getenv("GEMINI_API_KEY")
@@ -73,7 +73,6 @@ class AIGenerator:
 
     def _build_prompt(self, theme: str) -> str:
         unique_id = str(uuid.uuid4())[:8]
-        # እዚህ ጋር ትክክለኛ ባዶ መስመሮችን (Actual Newlines) በፕሮምፕቱ ውስጥ ተጠቅሜያለሁ
         return f"""CRITICAL SYSTEM INSTRUCTION: Your output MUST BE 100% Amharic. NO English.
 STRICT TELEGRAM HTML RULES:
 1. DO NOT use <html>, <body>, or <head> tags.
@@ -95,7 +94,8 @@ MANDATORY STRUCTURE (Ensure large vertical gaps):
 
 
 <b>2. ☦️ የቅዱሳን አባቶች የብርሃን ማዕድ:</b>
-[Provide rare teaching here with deep spiritual mystery]
+You MUST name a specific EOTC Father (e.g. ቅዱስ ዮሐንስ አፈወርቅ, ቅዱስ ይስሐቅ ሶርያዊ, etc.) and provide their direct quote.
+Format: [Name] እንዲህ ይላል፦ <blockquote>[Father's Deep Quote]</blockquote>
 
 
 ✧—————✧
@@ -112,7 +112,7 @@ MANDATORY STRUCTURE (Ensure large vertical gaps):
 [Unique one-line blessing]"""
 
     def _validate_response(self, text: str) -> bool:
-        if len(text) < 250: return False
+        if len(text) < 300: return False
         required_emojis = ["🏛️", "☦️", "🕊️", "✨"]
         return all(emoji in text for emoji in required_emojis)
 
@@ -125,7 +125,8 @@ MANDATORY STRUCTURE (Ensure large vertical gaps):
                 "model": model_id, 
                 "messages": [{"role": "user", "content": prompt}],
                 "temperature": 0.85,
-                "presence_penalty": 0.6
+                "presence_penalty": 0.8,
+                "frequency_penalty": 0.8 
             }
             
             try:
@@ -133,15 +134,14 @@ MANDATORY STRUCTURE (Ensure large vertical gaps):
                 res.raise_for_status()
                 content = res.json().get("choices", [{}])[0].get("message", {}).get("content", "").strip()
                 
-                # --- CRITICAL FIX: Post-Processing ---
-                # በ AIው በስህተት የተጻፉ የኮድ ምልክቶችን ወደ እውነተኛ አዲስ መስመር ይቀይራል
+                # --- FORMATTING PROTECTION ---
                 content = content.replace('\\n', '\n').replace('\\\\n', '\n')
-                # ትርፍ ክፍተቶችን ያስተካክላል
-                content = re.sub(r'\n{4,}', '\n\n\n', content)
+                content = re.sub(r'\n{4,}', '\n\n\n', content) # Normalize whitespace
+                content = content.replace('**', '') # Double check for markdown
                 
                 if self._validate_response(content):
                     return content
-                logging.warning(f"{model_id} output failed validation.")
+                logging.warning(f"{model_id} failed validation.")
             except Exception as e:
                 logging.error(f"Error with {model_id}: {e}")
             
@@ -158,13 +158,9 @@ class TelegramBroadcaster:
         self.api_url = f"https://api.telegram.org/bot{self.token}/sendMessage"
 
     def _sanitize_output(self, text: str) -> str:
-        """Removes crashing HTML tags and cleans up accidental code snippets."""
-        # Remove common unsupported tags
-        for tag in ["<html>", "</html>", "<body>", "</body>", "<head>", "</head>", "```html", "```"]:
+        bad_tags = ["<html>", "</html>", "<body>", "</body>", "<head>", "</head>", "```html", "```"]
+        for tag in bad_tags:
             text = re.sub(re.escape(tag), "", text, flags=re.IGNORECASE)
-        
-        # Ensure blockquote and bold are properly formatted if AI messes up
-        text = text.replace('**', '') # Double check no markdown remains
         return text.strip()
 
     def broadcast(self, message: str) -> None:
@@ -187,15 +183,14 @@ class TelegramBroadcaster:
                 if res.status_code == 200:
                     logging.info(f"Broadcast successful to: {chat_id}")
                 else:
-                    logging.warning(f"HTML Parse Error for {chat_id}. Falling back to plain text.")
+                    logging.warning(f"HTML error for {chat_id}. Sending plain text fallback.")
                     payload.pop("parse_mode")
                     requests.post(self.api_url, json=payload, timeout=20)
             except Exception as e:
-                logging.error(f"Network error delivering to {chat_id}: {e}")
+                logging.error(f"Delivery failed for {chat_id}: {e}")
 
 def main():
-    logging.info("Starting Spiritual Drip Orchestrator...")
-    
+    logging.info("Starting Spiritual Drip Orchestrator (Complete Version)...")
     theme_mgr = ThemeManager()
     ai_gen = AIGenerator()
     broadcaster = TelegramBroadcaster()
@@ -207,7 +202,7 @@ def main():
         broadcaster.broadcast(final_content)
         logging.info("Drip session completed successfully.")
     else:
-        logging.critical("No content could be generated after all retries.")
+        logging.critical("No content generated.")
 
 if __name__ == "__main__":
     main()
