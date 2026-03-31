@@ -2,8 +2,8 @@ name: Daily Spiritual Drip
 
 on:
   schedule:
-    - cron: '0 5 * * *' # በየቀኑ በኢትዮጵያ አቆጣጠር 11:00 AM አካባቢ
-  workflow_dispatch: # በእጅህ ለመሞከር እንዲመችህ
+    - cron: '30 3 * * *' # በኢትዮጵያ 6:30 AM (ጠዋት 12:30) ላይ እንዲነሳ ያደርገዋል
+  workflow_dispatch:
 
 jobs:
   build:
