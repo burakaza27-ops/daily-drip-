@@ -86,29 +86,26 @@ TARGET: Sunday School youth (የሃይማኖት ማኅቶት አብሪዎች).
 STYLE: Majestic, Poetic, and Deep. Use rich Amharic so the youth can understand easily.
 SESSION: {unique_id} | THEME: {theme}
 
-MANDATORY STRUCTURE:
+MANDATORY STRUCTURE (Copy this formatting exactly. DO NOT use A) or B) lists):
 
 <b>1. 🏛️ የሰማያዊ ጥበብ መክፈቻ:</b>
-Select a high-impact verse in pure AMHARIC (የአማርኛ መጽሐፍ ቅዱስ ትርጉም).
-<blockquote><b>[Amharic Verse Text]</b> — [Book] [Chapter:Verse]</blockquote>
+<blockquote>[Amharic Verse Text] — <b>[Book] [Chapter:Verse]</b></blockquote>
 
 
 ✧—————✧
 
 
 <b>2. ☦️ የቅዱሳን አባቶች የብርሃን ማዕድ:</b>
-A) Name a specific Father (e.g. ቅዱስ ዮሐንስ አፈወርቅ).
-B) Provide their direct quote in a blockquote (can be Ge'ez if you translate it, or pure Amharic).
-C) CRITICAL: Write a LONG, detailed paragraph (5-7 sentences) explaining the 'ምሥጢር' (deep spiritual mystery) behind this quote in clear AMHARIC so the youth can apply it to their modern lives.
-<blockquote>[Father's Direct Quote]</blockquote>
-[Detailed Spiritual Analysis and Mystery Explanation in Amharic]
+<blockquote>"[Father's Direct Quote in Amharic]"
+— <b>[Name of the Father, e.g., ቅዱስ ዮሐንስ አፈወርቅ]</b></blockquote>
+[Write a LONG, detailed paragraph (5-7 sentences) explaining the 'ምሥጢር' (deep spiritual mystery) behind this quote in clear AMHARIC so the youth can apply it to their modern lives.]
 
 
 ✧—————✧
 
 
 <b>3. 🕊️ ለነገው የአጥቢያ ብርሃን:</b>
-Provide a comprehensive challenge for the youth. Write a detailed guide (at least 6 powerful sentences in Amharic) using keywords: 'ባለራዕይ', 'ጽኑዕ', 'መዝገበ ሃይማኖት', 'ተጋድሎ'. Make it inspiring and demanding of spiritual excellence.
+[Provide a comprehensive challenge for the youth. Write a detailed guide (at least 6 powerful sentences in Amharic) using keywords: 'ባለራዕይ', 'ጽኑዕ', 'መዝገበ ሃይማኖት', 'ተጋድሎ'. Make it inspiring and demanding of spiritual excellence.]
 
 
 ✧—————✧
