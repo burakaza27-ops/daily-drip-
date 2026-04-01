@@ -107,10 +107,56 @@ async function renderHtmlToImage(segment, insight) {
         await page.screenshot({ path: outputPath, type: 'png' });
         
         console.log('✅ Successfully generated high-resolution media.');
+        return outputPath;
     } finally {
         await browser.close();
         // Clean up temp file
         await fs.unlink(tmpHtmlPath).catch(() => {});
+    }
+}
+
+// -----------------------------------------
+// 4. Telegram Broadcasting
+// -----------------------------------------
+async function broadcastToTelegram(imagePath, caption) {
+    const token = process.env.TELEGRAM_TOKEN;
+    const chatIdsRaw = process.env.TELEGRAM_CHAT_IDS;
+    
+    if (!token || !chatIdsRaw) {
+        console.warn('⚠ Telegram credentials not found. Skipping broadcast.');
+        return;
+    }
+
+    const chatIds = chatIdsRaw.split(',').map(id => id.trim()).filter(id => id);
+    if (chatIds.length === 0) return;
+
+    console.log('Broadcasting to Telegram...');
+    
+    const fileBuffer = await fs.readFile(imagePath);
+    const fileBlob = new Blob([fileBuffer], { type: 'image/png' });
+
+    for (const chatId of chatIds) {
+        try {
+            const formData = new FormData();
+            formData.append('chat_id', chatId);
+            formData.append('caption', caption);
+            formData.append('parse_mode', 'HTML');
+            formData.append('photo', fileBlob, path.basename(imagePath));
+
+            const url = `https://api.telegram.org/bot${token}/sendPhoto`;
+            const res = await fetch(url, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(`Telegram API Error: ${res.status} ${text}`);
+            }
+            console.log(`✅ Successfully sent to chat: ${chatId}`);
+        } catch (e) {
+            console.error(`❌ Failed to send to chat: ${chatId}`, e);
+        }
     }
 }
 
@@ -129,7 +175,11 @@ async function main() {
         const insight = await generateInsight(segment);
         console.log(`Insight: ${insight}`);
         
-        await renderHtmlToImage(segment, insight);
+        const outputPath = await renderHtmlToImage(segment, insight);
+        
+        const caption = `<b>❖ 📅 የዕለቱ ቅዳሴ ምስጢር ❖</b>\n\n📖 <b>${segment.part_name} | ${segment.role}</b>\n\n✨ <i>${insight}</i>\n\nለመንፈሳዊ ቤተሰብዎ ያካፍሉ 🕊️`;
+        
+        await broadcastToTelegram(outputPath, caption);
     } else {
         console.log('Skipping Liturgy generation. Unknown content type or missing flag.');
     }
