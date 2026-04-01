@@ -30,14 +30,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Setup Python for backward compatibility with daily_verse
       - name: Set up Python
         if: ${{ github.event.inputs.content_type == 'daily_verse' }}
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # Setup Node for liturgy_teaching
       - name: Set up Node.js
         if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
         uses: actions/setup-node@v4
@@ -45,21 +43,21 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install Node Dependencies
+      - name: Install Dependencies
         if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
-        run: |
-          npm install
-          npx puppeteer browsers install chrome
+        run: npm install
 
-      - name: Run Pipeline (Liturgy Teaching)
+      - name: Run Liturgy Pipeline
         if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
-        run: node src/index.js --type=liturgy_teaching --anaphora=${{ github.event.inputs.anaphora_type }}
+        run: |
+          npx puppeteer browsers install chrome
+          node src/index.js --type=liturgy_teaching --anaphora=${{ github.event.inputs.anaphora_type }}
 
-      - name: Run Pipeline (Python Verse)
+      - name: Run Verse Pipeline
         if: ${{ github.event.inputs.content_type == 'daily_verse' }}
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -69,7 +67,6 @@ jobs:
           pip install requests
           python send_verse.py
 
-      # Commit state.json progress back to repo
       - name: Commit Teaching Progress
         if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
         run: |
