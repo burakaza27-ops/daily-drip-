@@ -1,0 +1,42 @@
+[
+  {
+    "id": "hawaryat_1",
+    "part_name": "The Preparatory Service",
+    "role": "Priest",
+    "geez_text": "አሐዱ አብ ቅዱስ፣ አሐዱ ወልድ ቅዱስ፣ አሐዱ ውእቱ መንፈስ ቅዱስ።",
+    "amharic_text": "አንዱ አብ ቅዱስ ነው፣ አንዱ ወልድ ቅዱስ ነው፣ መንፈስ ቅዱስም አንዱ እርሱ ቅዱስ ነው።",
+    "english_text": "One is the Holy Father, one is the Holy Son, one is the Holy Spirit."
+  },
+  {
+    "id": "hawaryat_2",
+    "part_name": "The Prayer of Thanksgiving",
+    "role": "People",
+    "geez_text": "በእማን ቅዱስ ውእቱ አብ ቅዱስ፣ ወወልድ ቅዱስ፣ ወመንፈስ ቅዱስ ቅዱስ።",
+    "amharic_text": "በእውነት አብ ቅዱስ ነው፣ ወልድም ቅዱስ ነው፣ መንፈስ ቅዱስም ቅዱስ ነው።",
+    "english_text": "Truly the Father is holy, the Son is holy, and the Holy Spirit is holy."
+  },
+  {
+    "id": "hawaryat_3",
+    "part_name": "The Anaphora",
+    "role": "Deacon",
+    "geez_text": "ትንሥኡ ለጸሎት።",
+    "amharic_text": "ለጸሎት ተነሡ።",
+    "english_text": "Stand up for prayer."
+  },
+  {
+    "id": "hawaryat_4",
+    "part_name": "The Anaphora",
+    "role": "Priest",
+    "geez_text": "ሰላም ለኵልክሙ።",
+    "amharic_text": "ሰላም ለሁላችሁ ይሁን።",
+    "english_text": "Peace be unto you all."
+  },
+  {
+    "id": "hawaryat_5",
+    "part_name": "The Anaphora",
+    "role": "People",
+    "geez_text": "ምስለ መንፈስከ።",
+    "amharic_text": "ከመንፈስህ ጋር።",
+    "english_text": "And with thy spirit."
+  }
+]

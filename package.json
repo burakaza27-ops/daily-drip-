@@ -1,0 +1,16 @@
+{
+  "name": "daily-drip-media",
+  "version": "1.0.0",
+  "description": "Automated EOTC media generation pipeline using Puppeteer and AI",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "generate": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "puppeteer": "^22.0.0",
+    "dotenv": "^16.4.5"
+  }
+}

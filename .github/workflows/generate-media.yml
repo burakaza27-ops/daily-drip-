@@ -1,0 +1,71 @@
+name: Generate Premium Media
+
+on:
+  workflow_dispatch:
+    inputs:
+      content_type:
+        description: 'Type of content to generate'
+        required: true
+        default: 'liturgy_teaching'
+        type: choice
+        options:
+          - liturgy_teaching
+          - daily_verse
+
+jobs:
+  generate-media:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Setup Python for backward compatibility with daily_verse
+      - name: Set up Python
+        if: ${{ github.event.inputs.content_type == 'daily_verse' }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # Setup Node for liturgy_teaching
+      - name: Set up Node.js
+        if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install System Dependencies for Puppeteer
+        if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
+        run: sudo apt-get update && sudo apt-get install -y libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libpangocairo-1.0-0 libasound2
+
+      - name: Install Node Dependencies
+        if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
+        run: npm install
+
+      - name: Run Pipeline (Liturgy)
+        if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node src/index.js --type=liturgy_teaching
+
+      - name: Run Pipeline (Python Verse)
+        if: ${{ github.event.inputs.content_type == 'daily_verse' }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
+        run: |
+          pip install requests
+          python send_verse.py
+
+      - name: Upload Output Artifacts
+        if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: liturgy-premium-cards
+          path: output/*.png
+          if-no-files-found: ignore
