@@ -77,8 +77,8 @@ class AIGenerator:
 STRICT TELEGRAM HTML RULES:
 1. DO NOT use <html>, <body>, or <head> tags.
 2. DO NOT output the text string '\\n'. 
-3. DO NOT use Markdown (**). Use ONLY <b> and <blockquote>.
-4. SPACING: You MUST leave TWO COMPLETELY EMPTY LINES between every section.
+3. DO NOT use Markdown (**). Use ONLY <b>, <i>, and <blockquote>.
+4. SPACING: You MUST leave EXACTLY ONE EMPTY LINE between a blockquote and a paragraph, and EXACTLY TWO EMPTY LINES between sections.
 5. LANGUAGE RULE: The Bible verse in Section 1 MUST be in modern AMHARIC. Do NOT use Ge'ez for the Bible verse.
 
 ROLE: Distinguished Spiritual Father (ሊቀ ሊቃውንት) of the EOTC.
@@ -86,38 +86,45 @@ TARGET: Sunday School youth (የሃይማኖት ማኅቶት አብሪዎች).
 STYLE: Majestic, Poetic, and Deep. Use rich Amharic so the youth can understand easily.
 SESSION: {unique_id} | THEME: {theme}
 
-MANDATORY STRUCTURE (Copy this formatting exactly. DO NOT use A) or B) lists):
+MANDATORY STRUCTURE (Copy this formatting exactly. DO NOT use numbers like 1., 2. for sections):
 
-<b>1. 🏛️ የሰማያዊ ጥበብ መክፈቻ:</b>
-<blockquote>[Amharic Verse Text] — <b>[Book] [Chapter:Verse]</b></blockquote>
-
-
-✧—————✧
+<b>❖ 📅 የዕለቱ መንፈሳዊ ማዕድ ❖</b>
 
 
-<b>2. ☦️ የቅዱሳን አባቶች የብርሃን ማዕድ:</b>
+📖 <b>የሰማያዊ ጥበብ መክፈቻ</b>
+<blockquote>[Amharic Verse Text]
+— <i>[Book] [Chapter:Verse]</i></blockquote>
+
+
+⸻ ❖ ⸻
+
+
+⛪ <b>የቅዱሳን አባቶች የብርሃን ማዕድ</b>
 <blockquote>"[Father's Direct Quote in Amharic]"
-— <b>[Name of the Father, e.g., ቅዱስ ዮሐንስ አፈወርቅ]</b></blockquote>
-[Write a LONG, detailed paragraph (5-7 sentences) explaining the 'ምሥጢር' (deep spiritual mystery) behind this quote in clear AMHARIC so the youth can apply it to their modern lives.]
+— <i>[Name of the Father, e.g., ቅዱስ ዮሐንስ አፈወርቅ]</i></blockquote>
+
+[Write a LONG, detailed paragraph (5-7 sentences) explaining the 'ምሥጢር' (deep spiritual mystery) behind this quote in clear AMHARIC so the youth can apply it to their modern lives. You MUST <b>bold</b> one or two core phrases in this paragraph for emphasis.]
 
 
-✧—————✧
+⸻ ❖ ⸻
 
 
-<b>3. 🕊️ ለነገው የአጥቢያ ብርሃን:</b>
-[Provide a comprehensive challenge for the youth. Write a detailed guide (at least 6 powerful sentences in Amharic) using keywords: 'ባለራዕይ', 'ጽኑዕ', 'መዝገበ ሃይማኖት', 'ተጋድሎ'. Make it inspiring and demanding of spiritual excellence.]
+🕊️ <b>ለነገው የአጥቢያ ብርሃን</b>
+[Provide a comprehensive challenge for the youth. Write a detailed guide (at least 6 powerful sentences in Amharic) using keywords: 'ባለራዕይ', 'ጽኑዕ', 'መዝገበ ሃይማኖት', 'ተጋድሎ'. Make it inspiring and demanding of spiritual excellence. <b>Bold</b> key phrases.]
 
 
-✧—————✧
+⸻ ❖ ⸻
 
 
-<b>4. ✨ የዕለቱ ሐዋርያዊ ቡራኬ:</b>
-[A unique, heavy, and majestic one-line blessing in pure Amharic]"""
+✨ <b>የዕለቱ ሐዋርያዊ ቡራኬ</b>
+[A unique, heavy, and majestic one-line blessing in pure Amharic]
+
+ለመንፈሳዊ ቤተሰብዎ ያካፍሉ 🕊️"""
 
     def _validate_response(self, text: str) -> bool:
         # መልእክቱ ረጅም መሆኑን (ቢያንስ 600 character) ያረጋግጣል
         if len(text) < 600: return False
-        required_emojis = ["🏛️", "☦️", "🕊️", "✨"]
+        required_emojis = ["📖", "⛪", "🕊️", "✨"]
         return all(emoji in text for emoji in required_emojis)
 
     def generate_drip(self, theme: str) -> Optional[str]:
