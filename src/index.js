@@ -18,21 +18,21 @@ async function loadKidaseData() {
 // 2. AI Insight Generation
 // -----------------------------------------
 async function generateInsight(segment) {
-    const prompt = `CRITICAL SYSTEM INSTRUCTION: Output MUST BE exactly 1 to 2 sentences of profound spiritual insight in English. DO NOT output HTML, MD or anything else.
+    const prompt = `CRITICAL SYSTEM INSTRUCTION: Output MUST BE exactly 1 to 2 sentences of profound spiritual insight. DO NOT output HTML, MD or anything else. Use pure English for the insight as requested.
 
 You are a Distinguished Spiritual Father of the Ethiopian Orthodox Tewahedo Church.
-Analyze this specific segment of the Anaphora of the Apostles (Qidasie Hawaryat):
+Analyze this specific liturgical dialogue from the Anaphora of the Apostles (Qidasie Hawaryat):
 
-Role: ${segment.role}
-Ge'ez: ${segment.geez_text}
-English: ${segment.english_text}
+Liturgy Part: ${segment.liturgy_part}
+Priest Says: ${segment.priest_geez} (${segment.priest_amharic})
+People Respond: ${segment.people_geez} (${segment.people_amharic})
 
-Explain the deep spiritual symbolic meaning of this exact segment ("When the Priest says X, it symbolizes Y"). Make it sound like "Quiet-Luxury" spiritual wisdom. 1-2 sentences maximum.`;
+Explain the deep spiritual symbolic meaning of this exact exchange between the Priest and the People. Why does the Church mandate this specific dialogue? Make it sound like "Quiet-Luxury" spiritual wisdom. 1-2 sentences maximum.`;
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
         console.warn('⚠ GEMINI_API_KEY not found. Using fallback hardcoded insight.');
-        return "In this sacred exchange, the physical and spiritual realms unite, reminding us of the eternal presence of the Holy Trinity in our daily communion.";
+        return "This sacred exchange between the clergy and the faithful bridges the earthly and heavenly sanctuary, reminding us that we stand before the throne of God in unified worship.";
     }
 
     try {
@@ -56,7 +56,7 @@ Explain the deep spiritual symbolic meaning of this exact segment ("When the Pri
         return data.choices[0].message.content.trim().replace(/"/g, '');
     } catch (e) {
         console.error('AI Generation Failed:', e);
-        return "This sacred dialogue anchors our faith, acting as a spiritual compass guiding us towards eternal heavenly grace.";
+        return "This mystical dialogue anchors the soul in the presence of the Almighty, transforming the congregation into a singular vessel of divine grace.";
     }
 }
 
@@ -68,19 +68,12 @@ async function renderHtmlToImage(segment, insight) {
     const tplPath = path.resolve('./templates/liturgy_teaching.html');
     let html = await fs.readFile(tplPath, 'utf-8');
 
-    // Role mapping formatting
-    const roleMapping = {
-        'Priest': 'Priest ጵርስፎራ',
-        'Deacon': 'Deacon ዲያቆን',
-        'People': 'People ሕዝብ'
-    };
-    const roleStr = roleMapping[segment.role] || segment.role;
-
-    html = html.replace('{{role}}', roleStr)
-               .replace('{{geez_text}}', segment.geez_text)
-               .replace('{{amharic_text}}', segment.amharic_text)
-               .replace('{{english_text}}', segment.english_text)
-               .replace('{{spiritual_insight}}', insight);
+    html = html.replace('{{liturgy_part}}', segment.liturgy_part)
+               .replace('{{priest_geez}}', segment.priest_geez)
+               .replace('{{priest_amharic}}', segment.priest_amharic)
+               .replace('{{people_geez}}', segment.people_geez)
+               .replace('{{people_amharic}}', segment.people_amharic)
+               .replace('{{teaching_insight}}', insight);
 
     // Save temporary hydrated HTML
     const tmpHtmlPath = path.resolve('./templates/temp_render.html');
@@ -94,7 +87,9 @@ async function renderHtmlToImage(segment, insight) {
 
     try {
         const page = await browser.newPage();
+        // High resolution for premium quality
         await page.setViewport({ width: 1080, height: 1350, deviceScaleFactor: 2 });
+        
         // Use file protocol to load the local file
         await page.goto(`file://${tmpHtmlPath}`, { waitUntil: 'networkidle0' });
 
@@ -170,14 +165,14 @@ async function main() {
     if (contentType === 'liturgy_teaching') {
         console.log('🚀 Starting Kidase Liturgy Pipeline');
         const segment = await loadKidaseData();
-        console.log(`Loaded segment: ${segment.part_name} - ${segment.role}`);
+        console.log(`Loaded segment: ${segment.liturgy_part}`);
         
         const insight = await generateInsight(segment);
         console.log(`Insight: ${insight}`);
         
         const outputPath = await renderHtmlToImage(segment, insight);
         
-        const caption = `<b>❖ 📅 የዕለቱ ቅዳሴ ምስጢር ❖</b>\n\n📖 <b>${segment.part_name} | ${segment.role}</b>\n\n✨ <i>${insight}</i>\n\nለመንፈሳዊ ቤተሰብዎ ያካፍሉ 🕊️`;
+        const caption = `<b>❖ 📅 የዕለቱ ቅዳሴ ምስጢር ❖</b>\n\n📖 <b>${segment.liturgy_part}</b>\n\n✨ <i>${insight}</i>\n\nለመንፈሳዊ ቤተሰብዎ ያካፍሉ 🕊️`;
         
         await broadcastToTelegram(outputPath, caption);
     } else {

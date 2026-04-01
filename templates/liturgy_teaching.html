@@ -4,25 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kidase Liturgy Teaching</title>
+    <!-- CRITICAL FIX: Ethiopic Font Support -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap');
-        
-        @font-face {
-            font-family: 'Nyala'; /* Classic EOTC Ethiopic Font */
-            /* Assuming system fallback if Nyala isn't available in puppeteer seamlessly, 
-               but we rely on standard Abyssinica SIL or sans-serif */
-            src: local('Nyala'), local('Abyssinica SIL');
-        }
-
         :root {
             --gold: #C5A059;
             --gold-light: #E8D09E;
-            --dark-velvet: #2A0800;
-            --midnight-blue: #0A1128;
-            --glass-bg: rgba(10, 17, 40, 0.65);
-            --glass-border: rgba(197, 160, 89, 0.4);
-            --text-primary: #F8F5F0;
-            --text-secondary: #D4C5B0;
+            --dark-velvet: #1C0500;
+            --midnight-blue: #080D1A;
+            --glass-bg: rgba(8, 13, 26, 0.75);
+            --glass-border: rgba(197, 160, 89, 0.3);
+            --text-priest: #F8F5F0;
+            --text-people: #E0D8C8;
+            --amharic-subtext: #A99E8F;
         }
 
         * {
@@ -31,180 +26,174 @@
             padding: 0;
         }
 
+        /* 
+         * GLOBALLY APPLY ETHIOPIC FONT TO ENSURE NO GLYPH ERRORS 
+         */
         body {
             width: 1080px;
-            height: 1350px; /* Standard portrait resolution */
-            background: linear-gradient(135deg, var(--midnight-blue) 0%, #151012 50%, var(--dark-velvet) 100%);
+            height: 1350px;
+            background: linear-gradient(145deg, var(--midnight-blue) 0%, #110B10 50%, var(--dark-velvet) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Inter', sans-serif;
-            color: var(--text-primary);
+            font-family: 'Noto Sans Ethiopic', 'Inter', sans-serif;
+            color: var(--text-priest);
             overflow: hidden;
             position: relative;
         }
 
-        /* Ambient glow effects behind the glass */
         .ambient-glow-1 {
             position: absolute;
-            top: 10%;
-            left: 10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(197,160,89,0.15) 0%, transparent 70%);
+            top: 5%;
+            left: 5%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(197,160,89,0.12) 0%, transparent 65%);
             filter: blur(60px);
             z-index: 0;
         }
 
         .ambient-glow-2 {
             position: absolute;
-            bottom: -10%;
-            right: 10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(42,8,0,0.8) 0%, transparent 70%);
+            bottom: -5%;
+            right: 0%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(28,5,0,0.9) 0%, transparent 70%);
             filter: blur(80px);
             z-index: 0;
         }
 
-        /* Main Container */
         .glass-pane {
-            width: 900px;
-            height: 1100px;
+            width: 920px;
+            height: 1150px;
             background: var(--glass-bg);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             border: 1px solid var(--glass-border);
-            border-radius: 32px;
-            padding: 60px 70px;
+            border-radius: 36px;
+            padding: 60px 80px;
             display: flex;
             flex-direction: column;
             position: relative;
             z-index: 10;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 0 40px rgba(197,160,89,0.05);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 0 50px rgba(197,160,89,0.03);
         }
 
-        /* Top Header */
         .header {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 50px;
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(197,160,89,0.2);
         }
 
-        .role-badge {
-            background: linear-gradient(90deg, rgba(197,160,89,0.1) 0%, rgba(197,160,89,0.2) 50%, rgba(197,160,89,0.1) 100%);
-            border: 1px solid var(--glass-border);
-            padding: 10px 30px;
-            border-radius: 50px;
-            color: var(--gold-light);
-            font-family: 'Inter', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 600;
+        .part-name {
+            font-size: 1.4rem;
+            color: var(--gold);
             letter-spacing: 2px;
             text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-weight: 600;
         }
 
-        /* Content Area */
         .content {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 40px;
+            gap: 50px; 
         }
 
-        .geez-section {
-            text-align: center;
-            margin-bottom: 20px;
+        /* Dialogue Box Styles */
+        .dialogue-block {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .dialogue-block::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 5px;
+            bottom: 5px;
+            width: 3px;
+            background: var(--gold);
+            border-radius: 5px;
+            opacity: 0.6;
+        }
+
+        .people-block::before {
+            background: rgba(197,160,89,0.3); /* Softer line for people's response */
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(197,160,89,0.1);
+            border: 1px solid rgba(197,160,89,0.4);
+            padding: 6px 18px;
+            border-radius: 30px;
+            color: var(--gold-light);
+            font-size: 1rem;
+            font-weight: 700;
+            align-self: flex-start;
+            margin-bottom: 5px;
         }
 
         .geez-text {
-            font-family: 'Nyala', 'Inter', serif;
-            font-size: 3.2rem;
-            line-height: 1.5;
-            color: var(--gold);
-            text-shadow: 0 4px 20px rgba(197,160,89,0.3);
-            margin-bottom: 15px;
+            font-size: 2.8rem;
+            line-height: 1.4;
+            color: var(--gold-light);
+            font-weight: 700;
+            text-shadow: 0 2px 15px rgba(197,160,89,0.2);
         }
 
-        .translation-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 40px;
+        .amharic-text {
+            font-size: 1.6rem;
+            line-height: 1.6;
+            color: var(--amharic-subtext);
+            font-weight: 400;
         }
 
-        .trans-block {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .lang-label {
-            font-size: 0.85rem;
-            color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            opacity: 0.8;
-            font-weight: 600;
-        }
-
-        .trans-text {
-            font-size: 1.35rem;
-            line-height: 1.7;
-            color: var(--text-primary);
-            font-weight: 300;
-        }
-
-        /* Insight Section */
+        /* Teaching Insight Section */
         .insight-section {
-            background: linear-gradient(135deg, rgba(197,160,89,0.08) 0%, rgba(197,160,89,0.02) 100%);
-            border-left: 4px solid var(--gold);
-            padding: 35px 40px;
-            border-radius: 0 16px 16px 0;
+            background: linear-gradient(135deg, rgba(197,160,89,0.05) 0%, transparent 100%);
+            border-top: 2px solid rgba(197,160,89,0.2);
+            border-bottom: 2px solid rgba(197,160,89,0.2);
+            padding: 30px 40px;
             margin-top: auto;
+            border-radius: 8px;
+            position: relative;
         }
 
         .insight-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
             color: var(--gold);
-            margin-bottom: 15px;
-            font-style: italic;
+            margin-bottom: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
         .insight-text {
-            font-size: 1.15rem;
-            line-height: 1.8;
+            /* If the insight is Amharic, it uses Ethiopic; if English, it uses Inter */
+            font-size: 1.3rem;
+            line-height: 1.7;
             color: var(--text-secondary);
             font-weight: 300;
         }
 
-        /* Footer */
         .footer {
-            margin-top: 40px;
+            margin-top: 35px;
             text-align: center;
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.4);
-            letter-spacing: 2px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 3px;
             text-transform: uppercase;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .footer::before, .footer::after {
-            content: '';
-            height: 1px;
-            width: 50px;
-            background: rgba(255,255,255,0.2);
         }
     </style>
 </head>
@@ -213,43 +202,37 @@
     <div class="ambient-glow-2"></div>
 
     <div class="glass-pane">
-        <!-- Badge -->
+        
         <div class="header">
-            <div class="role-badge">
-                {{role}}
-            </div>
+            <div class="part-name">{{liturgy_part}}</div>
         </div>
 
-        <!-- Liturgy Core -->
         <div class="content">
-            <div class="geez-section">
-                <div class="geez-text">"{{geez_text}}"</div>
+            <!-- Priest Dialogue -->
+            <div class="dialogue-block">
+                <div class="role-badge">ካህን (Priest)</div>
+                <div class="geez-text">{{priest_geez}}</div>
+                <div class="amharic-text">{{priest_amharic}}</div>
             </div>
 
-            <div class="translation-grid">
-                <div class="trans-block">
-                    <span class="lang-label">Amharic</span>
-                    <p class="trans-text">{{amharic_text}}</p>
-                </div>
-                <div class="trans-block">
-                    <span class="lang-label">English</span>
-                    <p class="trans-text">{{english_text}}</p>
-                </div>
+            <!-- People Dialogue -->
+            <div class="dialogue-block people-block">
+                <div class="role-badge">ሕዝብ (People)</div>
+                <div class="geez-text">{{people_geez}}</div>
+                <div class="amharic-text">{{people_amharic}}</div>
             </div>
         </div>
 
-        <!-- AI Insight -->
+        <!-- AI Spiritual Insight -->
         <div class="insight-section">
-            <div class="insight-label">
-                <span>✨</span> Spiritual Insight
-            </div>
+            <div class="insight-label">✨ Teaching Insight</div>
             <div class="insight-text">
-                {{spiritual_insight}}
+                {{teaching_insight}}
             </div>
         </div>
 
         <div class="footer">
-            EOTC Media Studio • Qidasie Hawaryat
+            EOTC MEDIA STUDIO • QIDASIE HAWARYAT
         </div>
     </div>
 </body>
