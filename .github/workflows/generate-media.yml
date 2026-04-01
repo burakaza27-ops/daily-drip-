@@ -38,9 +38,7 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install System Dependencies for Puppeteer
-        if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
-        run: sudo apt-get update && sudo apt-get install -y libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libpangocairo-1.0-0 libasound2
+
 
       - name: Install Node Dependencies
         if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
