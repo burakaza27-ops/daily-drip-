@@ -23,6 +23,7 @@ async function loadSequentialSegment(anaphoraType) {
     const currentIndex = state[anaphoraType] || 0;
     const segment = segments[currentIndex];
 
+    // Read to next
     const nextIndex = (currentIndex + 1) % total;
     state[anaphoraType] = nextIndex;
     await fs.writeFile(statePath, JSON.stringify(state, null, 2));
@@ -84,7 +85,7 @@ ONLY RETURN THE JSON OBJECT.`;
         return { ...segment, ...refined };
     } catch (e) {
         console.error('Scholar Refinement Failed:', e);
-        return segment; // Fallback to original
+        return segment; 
     }
 }
 
@@ -187,9 +188,21 @@ async function broadcastToTelegram(imagePath, caption) {
     const token = process.env.TELEGRAM_TOKEN;
     const chatIdsRaw = process.env.TELEGRAM_CHAT_IDS;
 
-    if (!token || !chatIdsRaw) return;
+    if (!token || !chatIdsRaw) {
+        console.error('❌ CRITICAL: TELEGRAM_TOKEN or TELEGRAM_CHAT_IDS missing from environment!');
+        return;
+    }
 
     const chatIds = chatIdsRaw.split(',').map(id => id.trim()).filter(Boolean);
+    console.log(`📡 Attempting broadcast to ${chatIds.length} chat(s)...`);
+
+    // Safety: Telegram captions have a 1024 char limit. 
+    let safeCaption = caption;
+    if (caption.length > 1000) {
+        console.warn('⚠ Caption too long. Truncating for Telegram safety.');
+        safeCaption = caption.substring(0, 997) + '...';
+    }
+
     const fileBuffer = await fs.readFile(imagePath);
     const fileBlob = new Blob([fileBuffer], { type: 'image/png' });
 
@@ -197,14 +210,21 @@ async function broadcastToTelegram(imagePath, caption) {
         try {
             const formData = new FormData();
             formData.append('chat_id', chatId);
-            formData.append('caption', caption);
+            formData.append('caption', safeCaption);
             formData.append('parse_mode', 'HTML');
             formData.append('photo', fileBlob, path.basename(imagePath));
 
             const url = `https://api.telegram.org/bot${token}/sendPhoto`;
-            await fetch(url, { method: 'POST', body: formData });
+            const res = await fetch(url, { method: 'POST', body: formData });
+            
+            const result = await res.json();
+            if (!res.ok) {
+                console.error(`❌ Telegram API Error (${chatId}):`, JSON.stringify(result, null, 2));
+            } else {
+                console.log(`✅ Successfully sent to chat: ${chatId}`);
+            }
         } catch (e) {
-            console.error(`❌ Failed for chat ${chatId}:`, e.message);
+            console.error(`❌ Network/Request Failed for chat ${chatId}:`, e.message);
         }
     }
 }
@@ -218,7 +238,7 @@ async function main() {
     const anaphoraType = args.find(a => a.startsWith('--anaphora='))?.split('=')[1] || 'hawaryat';
 
     if (contentType === 'liturgy_teaching') {
-        console.log(`\n✝ KIDASE LITURGY TEACHING — SCHOLAR MODE`);
+        process.stdout.write(`\n✝ KIDASE LITURGY TEACHING — SCHOLAR MODE\n`);
         
         let { segment, stepCurrent, stepTotal } = await loadSequentialSegment(anaphoraType);
         
@@ -236,7 +256,7 @@ async function main() {
         const caption = `<b>❖ ቅዳሴ ሐዋርያት — ክፍል ${stepCurrent}/${stepTotal} ❖</b>\n\n📖 <b>${segment.liturgy_part}</b>\n\n${rolesText}✨ <i>${insight}</i>\n\nለመንፈሳዊ ቤተሰብዎ ያካፍሉ 🕊️`;
 
         await broadcastToTelegram(outputPath, caption);
-        console.log(`\n✅ Teaching complete: Part ${stepCurrent}`);
+        console.log(`\n✅ Teaching process finished: Part ${stepCurrent}`);
     }
 }
 
