@@ -1,26 +1,34 @@
 [
   {
-    "id": "hawaryat_dialogue_1",
-    "liturgy_part": "አኰቴተ ቊርባን (The Thanksgiving)",
+    "id": "hawaryat_acclamation_1",
+    "liturgy_part": "አኰቴተ ቊርባን (Eucharistic Acclamation)",
     "priest_geez": "አእኵትዎ ለአምላክነ።",
     "priest_amharic": "አምላካችንን አመስግኑት።",
     "people_geez": "ርቱዕ ወጽድቅ።",
     "people_amharic": "እውነት ነው ይገባል።"
   },
   {
-    "id": "hawaryat_dialogue_2",
-    "liturgy_part": "ጸሎተ አኰቴት (The Prayer of Thanksgiving)",
+    "id": "hawaryat_salutation",
+    "liturgy_part": "ቅዳሴ ሐዋርያት (Salutation)",
     "priest_geez": "ሰላም ለኵልክሙ።",
     "priest_amharic": "ሰላም ለሁላችሁ ይሁን።",
     "people_geez": "ምስለ መንፈስከ።",
     "people_amharic": "ከመንፈስህ ጋር።"
   },
   {
-    "id": "hawaryat_dialogue_3",
-    "liturgy_part": "ቅዳሴ ሐዋርያት (Anaphora of the Apostles)",
+    "id": "hawaryat_sursum_corda",
+    "liturgy_part": "ቅዳሴ ሐዋርያት (Sursum Corda)",
     "priest_geez": "አልዕሉ አዕይንተ ልቢክሙ።",
     "priest_amharic": "የልቦናችሁን ዓይኖች ከፍ ከፍ አድርጉ።",
     "people_geez": "ብነ ኀበ እግዚአብሔር አምላክነ።",
     "people_amharic": "በአምላካችን በእግዚአብሔር ዘንድ አለን።"
+  },
+  {
+    "id": "hawaryat_benediction",
+    "liturgy_part": "ቅዳሴ ሐዋርያት (Benediction)",
+    "priest_geez": "እግዚአብሔር ምስለ ኵልክሙ።",
+    "priest_amharic": "እግዚአብሔር ከሁላችሁ ጋር ይሁን።",
+    "people_geez": "ምስለ መንፈስከ።",
+    "people_amharic": "ከመንፈስህ ጋር።"
   }
 ]

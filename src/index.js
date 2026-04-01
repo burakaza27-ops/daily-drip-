@@ -15,28 +15,28 @@ async function loadKidaseData() {
 }
 
 // -----------------------------------------
-// 2. AI Insight Generation
+// 2. AI Insight Generation (Theological Amharic)
 // -----------------------------------------
 async function generateInsight(segment) {
-    const prompt = `CRITICAL SYSTEM INSTRUCTION: Output MUST BE exactly 1 to 2 sentences of profound spiritual insight. DO NOT output HTML, MD or anything else. Use pure English for the insight as requested.
+    const prompt = `CRITICAL SYSTEM INSTRUCTION: Output MUST BE in Perfect, Elegant, Theological AMHARIC (Mistir/ምስጢር). DO NOT output English, HTML, or Markdown.
 
-You are a Distinguished Spiritual Father of the Ethiopian Orthodox Tewahedo Church.
-Analyze this specific liturgical dialogue from the Anaphora of the Apostles (Qidasie Hawaryat):
+You are a Liturgical Scholar and Spiritual Father of the Ethiopian Orthodox Tewahedo Church.
+Analyze this segment of the Anaphora of the Apostles (Qidasie Hawaryat):
 
 Liturgy Part: ${segment.liturgy_part}
 Priest Says: ${segment.priest_geez} (${segment.priest_amharic})
 People Respond: ${segment.people_geez} (${segment.people_amharic})
 
-Explain the deep spiritual symbolic meaning of this exact exchange between the Priest and the People. Why does the Church mandate this specific dialogue? Make it sound like "Quiet-Luxury" spiritual wisdom. 1-2 sentences maximum.`;
+Explain the deep spiritual symbolic mystery (Mistir) of this specific exchange in the Apostles' Liturgy. Why is this dialogue essential? Write 1-2 profound sentences in AMHARIC that reflect "Quiet-Luxury" spiritual wisdom.`;
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
         console.warn('⚠ GEMINI_API_KEY not found. Using fallback hardcoded insight.');
-        return "This sacred exchange between the clergy and the faithful bridges the earthly and heavenly sanctuary, reminding us that we stand before the throne of God in unified worship.";
+        return "ይህ ቅዱስ ውይይት በክህነቱና በምእመናን መካከል ያለውን ሰማያዊ አንድነት የሚገልጽ ሲሆን፥ ልባችንን ወደ እግዚአብሔር መንግሥት ከፍ እንድናደርግ ያሳስበናል።";
     }
 
     try {
-        console.log('Generating AI Insight...');
+        console.log('Generating AI Insight in Amharic...');
         const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -56,12 +56,12 @@ Explain the deep spiritual symbolic meaning of this exact exchange between the P
         return data.choices[0].message.content.trim().replace(/"/g, '');
     } catch (e) {
         console.error('AI Generation Failed:', e);
-        return "This mystical dialogue anchors the soul in the presence of the Almighty, transforming the congregation into a singular vessel of divine grace.";
+        return "ይህ ሚስጥራዊ ንግግር የሰውን ልጅ ከፈጣሪው ጋር የሚያገናኝ የጸሎት መሰላል ነው፤ ይህም በቤተክርስቲያን አንድነት ውስጥ የሚገኝ የጸጋ ምንጭ ነው።";
     }
 }
 
 // -----------------------------------------
-// 3. Template Rendering (Puppeteer)
+// 3. Template Rendering (Puppeteer with Font Detection)
 // -----------------------------------------
 async function renderHtmlToImage(segment, insight) {
     console.log('Injecting data into template...');
@@ -75,7 +75,6 @@ async function renderHtmlToImage(segment, insight) {
                .replace('{{people_amharic}}', segment.people_amharic)
                .replace('{{teaching_insight}}', insight);
 
-    // Save temporary hydrated HTML
     const tmpHtmlPath = path.resolve('./templates/temp_render.html');
     await fs.writeFile(tmpHtmlPath, html);
 
@@ -87,25 +86,24 @@ async function renderHtmlToImage(segment, insight) {
 
     try {
         const page = await browser.newPage();
-        // High resolution for premium quality
         await page.setViewport({ width: 1080, height: 1350, deviceScaleFactor: 2 });
         
-        // Use file protocol to load the local file
         await page.goto(`file://${tmpHtmlPath}`, { waitUntil: 'networkidle0' });
+
+        // CRITICAL: Wait for fonts (Abyssinica SIL & Noto Sans) to load
+        console.log('Waiting for sacred fonts to load...');
+        await page.evaluateHandle('document.fonts.ready');
 
         const outputDir = path.resolve('./output');
         await fs.mkdir(outputDir, { recursive: true });
         
         const outputPath = path.join(outputDir, `liturgy_${segment.id}_${Date.now()}.png`);
-        
-        console.log(`Taking screenshot: ${outputPath}`);
         await page.screenshot({ path: outputPath, type: 'png' });
         
-        console.log('✅ Successfully generated high-resolution media.');
+        console.log(`✅ Media successfully rendered: ${outputPath}`);
         return outputPath;
     } finally {
         await browser.close();
-        // Clean up temp file
         await fs.unlink(tmpHtmlPath).catch(() => {});
     }
 }
@@ -118,13 +116,11 @@ async function broadcastToTelegram(imagePath, caption) {
     const chatIdsRaw = process.env.TELEGRAM_CHAT_IDS;
     
     if (!token || !chatIdsRaw) {
-        console.warn('⚠ Telegram credentials not found. Skipping broadcast.');
+        console.warn('⚠ Telegram credentials missing. Skipping broadcast.');
         return;
     }
 
     const chatIds = chatIdsRaw.split(',').map(id => id.trim()).filter(id => id);
-    if (chatIds.length === 0) return;
-
     console.log('Broadcasting to Telegram...');
     
     const fileBuffer = await fs.readFile(imagePath);
@@ -139,36 +135,29 @@ async function broadcastToTelegram(imagePath, caption) {
             formData.append('photo', fileBlob, path.basename(imagePath));
 
             const url = `https://api.telegram.org/bot${token}/sendPhoto`;
-            const res = await fetch(url, {
-                method: 'POST',
-                body: formData
-            });
+            const res = await fetch(url, { method: 'POST', body: formData });
 
-            if (!res.ok) {
-                const text = await res.text();
-                throw new Error(`Telegram API Error: ${res.status} ${text}`);
-            }
-            console.log(`✅ Successfully sent to chat: ${chatId}`);
+            if (!res.ok) throw new Error(await res.text());
+            console.log(`✅ Sent to chat: ${chatId}`);
         } catch (e) {
-            console.error(`❌ Failed to send to chat: ${chatId}`, e);
+            console.error(`❌ Failed for chat: ${chatId}`, e);
         }
     }
 }
 
 // -----------------------------------------
-// Main Execution Branch
+// Main Execution
 // -----------------------------------------
 async function main() {
     const args = process.argv.slice(2);
     const contentType = args.includes('--type=liturgy_teaching') ? 'liturgy_teaching' : 'default';
 
     if (contentType === 'liturgy_teaching') {
-        console.log('🚀 Starting Kidase Liturgy Pipeline');
+        console.log('🚀 Starting Perfection Phase: Kidase Liturgy');
         const segment = await loadKidaseData();
-        console.log(`Loaded segment: ${segment.liturgy_part}`);
         
         const insight = await generateInsight(segment);
-        console.log(`Insight: ${insight}`);
+        console.log(`Insight Generated (Amharic)`);
         
         const outputPath = await renderHtmlToImage(segment, insight);
         
@@ -176,7 +165,7 @@ async function main() {
         
         await broadcastToTelegram(outputPath, caption);
     } else {
-        console.log('Skipping Liturgy generation. Unknown content type or missing flag.');
+        console.log('Invalid or unspecified content type.');
     }
 }
 
