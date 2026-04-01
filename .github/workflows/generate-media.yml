@@ -43,6 +43,19 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Install System Dependencies (Linux)
+        if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgbm1 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libpango-1.0-0 libcairo2 libasound2
+
+      - name: Setup Chrome (System Level)
+        id: setup-chrome
+        if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
       - name: Install Dependencies
         if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
         run: npm install
@@ -53,8 +66,8 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
+          PUPPETEER_EXECUTABLE_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
         run: |
-          npx puppeteer browsers install chrome
           node src/index.js --type=liturgy_teaching --anaphora=${{ github.event.inputs.anaphora_type }}
 
       - name: Run Verse Pipeline
