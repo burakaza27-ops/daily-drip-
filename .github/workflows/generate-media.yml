@@ -11,6 +11,13 @@ on:
         options:
           - liturgy_teaching
           - daily_verse
+      anaphora_type:
+        description: 'Which Anaphora to teach (for liturgy_teaching only)'
+        required: false
+        default: 'hawaryat'
+        type: choice
+        options:
+          - hawaryat
 
 jobs:
   generate-media:
@@ -38,19 +45,17 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-
-
       - name: Install Node Dependencies
         if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
         run: npm install
 
-      - name: Run Pipeline (Liturgy)
+      - name: Run Pipeline (Liturgy Teaching)
         if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
-        run: node src/index.js --type=liturgy_teaching
+        run: node src/index.js --type=liturgy_teaching --anaphora=${{ github.event.inputs.anaphora_type }}
 
       - name: Run Pipeline (Python Verse)
         if: ${{ github.event.inputs.content_type == 'daily_verse' }}
@@ -61,6 +66,16 @@ jobs:
         run: |
           pip install requests
           python send_verse.py
+
+      # Commit state.json progress back to repo
+      - name: Commit Teaching Progress
+        if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}
+        run: |
+          git config --global user.name "EOTC Media Bot"
+          git config --global user.email "bot@eotc-media.studio"
+          git add src/data/state.json
+          git diff --cached --quiet || git commit -m "📖 Auto: Update teaching progress [skip ci]"
+          git push
 
       - name: Upload Output Artifacts
         if: ${{ github.event.inputs.content_type == 'liturgy_teaching' }}

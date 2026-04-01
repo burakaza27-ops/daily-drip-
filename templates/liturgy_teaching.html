@@ -1,257 +1,312 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="am">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kidase Liturgy Teaching</title>
-    <!-- CRITICAL FONT FIX: Sacred Ge'ez and Elegant Amharic -->
-    <link href="https://fonts.googleapis.com/css2?family=Abyssinica+SIL&family=Noto+Sans+Ethiopic:wght@400;700&family=Inter:wght@300;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Abyssinica+SIL&family=Noto+Sans+Ethiopic:wght@400;500;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Palette: Modern Ancient */
             --gold: #C5A059;
             --gold-bright: #E8D09E;
+            --gold-dim: rgba(197, 160, 89, 0.15);
             --imperial-red: #8B0000;
-            --midnight: #050810;
-            --charcoal: #121212;
-            --glass-bg: rgba(18, 18, 18, 0.7);
-            --glass-border: rgba(197, 160, 89, 0.25);
-            --text-ivory: #F8F5F0;
-            --text-muted: #A99E8F;
+            --midnight: #06090F;
+            --charcoal-deep: #0C0F18;
+            --glass-bg: rgba(12, 15, 24, 0.72);
+            --glass-border: rgba(197, 160, 89, 0.22);
+            --ivory: #FAF7F2;
+            --silver: #B8AFA3;
+            --muted: #7A7268;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             width: 1080px;
             height: 1350px;
             background-color: var(--midnight);
-            /* Premium Layered CSS Background */
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(139, 0, 0, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(197, 160, 89, 0.1) 0px, transparent 50%),
-                radial-gradient(at 50% 50%, rgba(10, 15, 30, 1) 0px, transparent 100%);
+            background-image:
+                radial-gradient(ellipse at 15% 10%, rgba(139, 0, 0, 0.18) 0px, transparent 55%),
+                radial-gradient(ellipse at 85% 90%, rgba(197, 160, 89, 0.1) 0px, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 9, 15, 0.95) 0px, transparent 100%),
+                linear-gradient(180deg, var(--midnight) 0%, var(--charcoal-deep) 100%);
+            font-family: 'Noto Sans Ethiopic', 'Inter', sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Noto Sans Ethiopic', sans-serif;
             overflow: hidden;
             position: relative;
         }
 
-        /* Subtle noise texture overlay */
+        /* Subtle sacred texture */
         body::before {
             content: "";
             position: absolute;
             inset: 0;
-            opacity: 0.03;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
             pointer-events: none;
         }
 
-        .container {
-            width: 900px;
-            height: 1150px;
+        /* Decorative cross watermark */
+        body::after {
+            content: "✝";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 600px;
+            color: rgba(197, 160, 89, 0.015);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .card {
+            width: 920px;
+            min-height: 1150px;
             background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
             border: 1px solid var(--glass-border);
-            border-radius: 40px;
+            border-radius: 44px;
+            padding: 65px 75px;
             display: flex;
             flex-direction: column;
-            padding: 70px 80px;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.8), inset 0 0 60px rgba(197,160,89,0.02);
             position: relative;
             z-index: 10;
+            box-shadow:
+                0 60px 120px rgba(0,0,0,0.7),
+                inset 0 1px 0 rgba(197, 160, 89, 0.08),
+                inset 0 0 80px rgba(197, 160, 89, 0.015);
         }
 
-        /* Corner accents */
-        .container::after {
+        /* Gold corner filigree accents */
+        .card::before, .card::after {
             content: "";
             position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
+            opacity: 0.25;
+        }
+        .card::before {
+            top: 22px; left: 22px;
             border-top: 2px solid var(--gold);
+            border-left: 2px solid var(--gold);
+            border-radius: 12px 0 0 0;
+        }
+        .card::after {
+            bottom: 22px; right: 22px;
+            border-bottom: 2px solid var(--gold);
             border-right: 2px solid var(--gold);
-            opacity: 0.3;
-            border-radius: 0 20px 0 0;
+            border-radius: 0 0 12px 0;
         }
 
-        .title-section {
+        /* ---- HEADER ---- */
+        .header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 45px;
+            position: relative;
         }
 
-        .title-badge {
-            color: var(--imperial-red);
-            font-size: 1.1rem;
-            letter-spacing: 5px;
+        .step-tracker {
+            display: inline-block;
+            background: rgba(139, 0, 0, 0.2);
+            border: 1px solid rgba(139, 0, 0, 0.4);
+            color: #D4A0A0;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 3px;
             text-transform: uppercase;
-            font-weight: 700;
-            margin-bottom: 10px;
-            display: block;
+            padding: 6px 22px;
+            border-radius: 30px;
+            margin-bottom: 18px;
         }
 
-        .part-name {
+        .liturgy-title {
             font-family: 'Abyssinica SIL', serif;
-            font-size: 1.8rem;
+            font-size: 1.7rem;
             color: var(--gold);
-            letter-spacing: 1px;
+            line-height: 1.4;
         }
 
+        .header-divider {
+            width: 120px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 20px auto 0;
+            opacity: 0.4;
+        }
+
+        /* ---- DIALOGUE FLOW ---- */
         .dialogue-flow {
-            flex-grow: 1;
+            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 70px;
+            gap: 55px;
         }
 
-        .block {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        .speaker-block {
             position: relative;
+            padding-left: 28px;
         }
 
-        .role-header {
+        .speaker-block::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            border-radius: 3px;
+        }
+
+        .priest-block::before {
+            background: linear-gradient(180deg, var(--gold), rgba(197, 160, 89, 0.3));
+        }
+
+        .people-block::before {
+            background: linear-gradient(180deg, rgba(197, 160, 89, 0.5), rgba(197, 160, 89, 0.15));
+        }
+
+        .speaker-header {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 10px;
+            gap: 14px;
+            margin-bottom: 16px;
         }
 
-        .role-icon {
-            width: 32px;
-            height: 32px;
+        .speaker-icon {
+            width: 28px;
+            height: 28px;
             fill: var(--gold);
-            opacity: 0.9;
+            opacity: 0.85;
+            flex-shrink: 0;
         }
 
-        .role-label {
-            font-size: 1.1rem;
+        .speaker-label {
+            font-size: 0.95rem;
             color: var(--gold-bright);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .geez-text {
-            font-family: 'Abyssinica SIL', serif;
-            font-size: 3.4rem;
-            line-height: 1.3;
-            color: var(--text-ivory);
             font-weight: 700;
-            text-shadow: 0 4px 20px rgba(197, 160, 89, 0.2);
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
         }
 
-        .amharic-text {
-            font-size: 1.6rem;
-            line-height: 1.6;
-            color: var(--text-muted);
-            font-style: italic;
-            border-left: 2px solid rgba(197, 160, 89, 0.2);
-            padding-left: 25px;
+        .geez {
+            font-family: 'Abyssinica SIL', serif;
+            font-size: 2.6rem;
+            line-height: 1.35;
+            color: var(--ivory);
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 20px rgba(197, 160, 89, 0.12);
         }
 
+        .amharic {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 1.45rem;
+            line-height: 1.65;
+            color: var(--silver);
+            font-weight: 400;
+            padding-left: 6px;
+            border-left: 2px solid rgba(197, 160, 89, 0.12);
+            margin-left: 2px;
+        }
+
+        /* ---- INSIGHT BOX ---- */
         .insight-box {
             margin-top: auto;
-            background: rgba(197, 160, 89, 0.04);
-            border: 1px solid rgba(197, 160, 89, 0.15);
-            padding: 35px 40px;
-            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(197, 160, 89, 0.04) 0%, rgba(139, 0, 0, 0.03) 100%);
+            border: 1px solid rgba(197, 160, 89, 0.12);
+            padding: 32px 38px;
+            border-radius: 22px;
             position: relative;
-            overflow: hidden;
         }
 
         .insight-box::before {
-            content: "ምስጢር"; /* Mystery in Amharic */
+            content: "ምስጢር";
             position: absolute;
-            top: -10px;
-            right: -10px;
-            font-size: 4rem;
+            bottom: 10px;
+            right: 25px;
+            font-family: 'Abyssinica SIL', serif;
+            font-size: 3.5rem;
             color: var(--gold);
             opacity: 0.03;
-            font-weight: 900;
+            font-weight: 700;
+            pointer-events: none;
         }
 
-        .insight-label {
-            font-size: 1rem;
+        .insight-header {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
             color: var(--gold);
             text-transform: uppercase;
             letter-spacing: 3px;
-            margin-bottom: 15px;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .insight-text {
-            font-size: 1.25rem;
-            line-height: 1.8;
-            color: var(--text-ivory);
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 1.2rem;
+            line-height: 1.85;
+            color: var(--ivory);
             font-weight: 400;
         }
 
+        /* ---- FOOTER ---- */
         .footer {
-            margin-top: 40px;
+            margin-top: 35px;
             text-align: center;
             font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.25);
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.2);
             letter-spacing: 4px;
             text-transform: uppercase;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Title -->
-        <div class="title-section">
-            <span class="title-badge">KIDASE</span>
-            <div class="part-name">{{liturgy_part}}</div>
+    <div class="card">
+        <div class="header">
+            <div class="step-tracker">PART {{step_current}} OF {{step_total}}</div>
+            <div class="liturgy-title">{{liturgy_part}}</div>
+            <div class="header-divider"></div>
         </div>
 
-        <!-- Flow -->
         <div class="dialogue-flow">
             <!-- Priest -->
-            <div class="block">
-                <div class="role-header">
-                    <svg class="role-icon" viewBox="0 0 24 24"><path d="M11 2h2v5h5v2h-5v5h5v2h-5v6h-2v-6H6v-2h5v-5H6V7h5V2z"/></svg>
-                    <span class="role-label">ካህን (Priest)</span>
+            <div class="speaker-block priest-block">
+                <div class="speaker-header">
+                    <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 2h2v5h5v2h-5v5h5v2h-5v6h-2v-6H6v-2h5v-5H6V7h5V2z"/></svg>
+                    <span class="speaker-label">ካህን — Priest</span>
                 </div>
-                <div class="geez-text">{{priest_geez}}</div>
-                <div class="amharic-text">{{priest_amharic}}</div>
+                <div class="geez">{{priest_geez}}</div>
+                <div class="amharic">{{priest_amharic}}</div>
             </div>
 
             <!-- People -->
-            <div class="block">
-                <div class="role-header">
-                    <svg class="role-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
-                    <span class="role-label">ሕዝብ (People)</span>
+            <div class="speaker-block people-block">
+                <div class="speaker-header">
+                    <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    <span class="speaker-label">ሕዝብ — People</span>
                 </div>
-                <div class="geez-text">{{people_geez}}</div>
-                <div class="amharic-text">{{people_amharic}}</div>
+                <div class="geez">{{people_geez}}</div>
+                <div class="amharic">{{people_amharic}}</div>
             </div>
         </div>
 
         <!-- Insight -->
         <div class="insight-box">
-            <div class="insight-label">✨ spiritual teaching</div>
-            <div class="insight-text">
-                {{teaching_insight}}
-            </div>
+            <div class="insight-header">✦ መንፈሳዊ ትምህርት</div>
+            <div class="insight-text">{{teaching_insight}}</div>
         </div>
 
-        <div class="footer">
-            EOTC MEDIA STUDIO • QIDASIE HAWARYAT
-        </div>
+        <div class="footer">EOTC Media Studio • ቅዳሴ ሐዋርያት</div>
     </div>
 </body>
 </html>
