@@ -7,18 +7,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Abyssinica+SIL&family=Noto+Sans+Ethiopic:wght@400;500;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold: #C5A059;
-            --gold-bright: #E8D09E;
-            --gold-dim: rgba(197, 160, 89, 0.15);
-            --imperial-red: #8B0000;
-            --midnight: #06090F;
-            --charcoal-deep: #0C0F18;
-            --glass-bg: rgba(12, 15, 24, 0.72);
-            --glass-border: rgba(197, 160, 89, 0.22);
-            --ivory: #FAF7F2;
-            --silver: #B8AFA3;
-            --muted: #7A7268;
-            --emerald: #2E8B57; /* asst_priest color */
+            /* Premium Core Palette */
+            --gold: #D4AF37;
+            --gold-bright: #F9E596;
+            --gold-dim: rgba(212, 175, 55, 0.15);
+            --imperial-red: #A31D1D;
+            --emerald: #14B866;
+            --silver: #C0C5CE;
+            --ivory: #FDFBF7;
+            
+            /* Deep Backgrounds */
+            --midnight: #030408;
+            --charcoal-deep: #090B10;
+            --glass-bg: rgba(9, 11, 16, 0.75);
+            --glass-border: rgba(212, 175, 55, 0.25);
+            
+            /* Text Muted */
+            --muted: #8E95A3;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,10 +33,9 @@
             height: 1350px;
             background-color: var(--midnight);
             background-image:
-                radial-gradient(ellipse at 15% 10%, rgba(139, 0, 0, 0.18) 0px, transparent 55%),
-                radial-gradient(ellipse at 85% 90%, rgba(197, 160, 89, 0.1) 0px, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(6, 9, 15, 0.95) 0px, transparent 100%),
-                linear-gradient(180deg, var(--midnight) 0%, var(--charcoal-deep) 100%);
+                radial-gradient(circle at 10% 0%, rgba(163, 29, 29, 0.28) 0vw, transparent 55vw),
+                radial-gradient(circle at 90% 100%, rgba(212, 175, 55, 0.22) 0vw, transparent 55vw),
+                linear-gradient(180deg, rgba(3, 4, 8, 0.4) 0%, rgba(9, 11, 16, 0.95) 100%);
             font-family: 'Noto Sans Ethiopic', 'Inter', sans-serif;
             display: flex;
             align-items: center;
@@ -44,48 +48,75 @@
             content: "";
             position: absolute;
             inset: 0;
-            opacity: 0.025;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
             pointer-events: none;
         }
 
         .card {
-            width: 920px;
-            min-height: 1150px;
-            max-height: 1250px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
+            width: 940px;
+            min-height: 1180px;
+            max-height: 1260px;
+            background: linear-gradient(145deg, rgba(15, 18, 25, 0.85) 0%, rgba(6, 8, 12, 0.95) 100%);
+            backdrop-filter: blur(48px);
+            -webkit-backdrop-filter: blur(48px);
             border: 1px solid var(--glass-border);
-            border-radius: 44px;
-            padding: 50px 70px;
+            border-radius: 48px;
+            padding: 60px 80px;
             display: flex;
             flex-direction: column;
             position: relative;
             z-index: 10;
             box-shadow:
-                0 60px 120px rgba(0,0,0,0.7),
-                inset 0 1px 0 rgba(197, 160, 89, 0.08);
+                0 80px 160px rgba(0,0,0,0.8),
+                0 0 80px rgba(212, 175, 55, 0.05),
+                inset 0 2px 3px rgba(255, 255, 255, 0.08);
             overflow: hidden;
         }
-
-        .header { text-align: center; margin-bottom: 30px; flex-shrink: 0; }
-        .step-tracker {
-            display: inline-block;
-            background: rgba(139, 0, 0, 0.2);
-            border: 1px solid rgba(139, 0, 0, 0.4);
-            color: #D4A0A0;
-            font-size: 0.8rem;
-            letter-spacing: 3px;
-            padding: 6px 22px;
-            border-radius: 30px;
-            margin-bottom: 12px;
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 15%; right: 15%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity: 0.8;
+            box-shadow: 0 2px 20px rgba(212, 175, 55, 0.8);
         }
+
+        .header { text-align: center; margin-bottom: 25px; flex-shrink: 0; }
+        
+        .step-tracker {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(90deg, rgba(163, 29, 29, 0.15), rgba(163, 29, 29, 0.4), rgba(163, 29, 29, 0.15));
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            color: var(--gold-bright);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 4px;
+            padding: 8px 26px;
+            border-radius: 40px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        
         .liturgy-title {
             font-family: 'Abyssinica SIL', serif;
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             color: var(--gold);
             line-height: 1.4;
+            text-shadow: 0 4px 20px rgba(212, 175, 55, 0.45);
+        }
+
+        /* Gradient Divider */
+        .header::after {
+            content: '';
+            display: block;
+            width: 140px;
+            height: 1px;
+            margin: 25px auto 0;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.5), transparent);
         }
 
         .dialogue-flow {
@@ -93,17 +124,20 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 25px;
+            gap: 28px;
             overflow-y: hidden;
         }
 
         .speaker-block {
             position: relative;
-            padding-left: 28px;
-            background: rgba(255,255,255,0.015);
-            border-radius: 12px;
-            padding: 15px 15px 15px 28px;
-            border: 1px solid rgba(255,255,255,0.03);
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.005) 100%);
+            border-radius: 0 16px 16px 0;
+            padding: 18px 25px 18px 35px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            border-right: 1px solid rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+            box-shadow: rgba(0, 0, 0, 0.2) 0px 10px 30px;
+            transition: all 0.3s ease;
         }
 
         /* Hide entire block if no Geez text initially */
@@ -116,105 +150,125 @@
             content: "";
             position: absolute;
             left: 0;
-            top: 15px;
-            bottom: 15px;
-            width: 3px;
-            border-radius: 3px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: 4px 0 0 4px;
         }
 
-        .deacon-block::before { background: linear-gradient(180deg, var(--imperial-red), transparent); }
-        .priest-block::before { background: linear-gradient(180deg, var(--gold), transparent); }
-        .asst_priest-block::before { background: linear-gradient(180deg, var(--emerald), transparent); }
-        .people-block::before { background: linear-gradient(180deg, var(--silver), transparent); }
+        .deacon-block::before { background: linear-gradient(180deg, var(--imperial-red), #6B0F0F); box-shadow: 0 0 15px rgba(163, 29, 29, 0.6); }
+        .priest-block::before { background: linear-gradient(180deg, var(--gold), #967A20); box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); }
+        .asst_priest-block::before { background: linear-gradient(180deg, var(--emerald), #0D8247); box-shadow: 0 0 15px rgba(20, 184, 102, 0.6); }
+        .people-block::before { background: linear-gradient(180deg, var(--silver), #868C96); box-shadow: 0 0 15px rgba(192, 197, 206, 0.4); }
 
         .speaker-header {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
+        
         .speaker-icon {
-            width: 20px;
-            height: 20px;            
-            opacity: 0.8;
+            width: 22px;
+            height: 22px;            
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
         }
-        .deacon-block .speaker-icon { fill: var(--imperial-red); }
-        .priest-block .speaker-icon { fill: var(--gold); }
-        .asst_priest-block .speaker-icon { fill: var(--emerald); }
-        .people-block .speaker-icon { fill: var(--silver); }
+        .deacon-block .speaker-icon { fill: #FF8585; }
+        .priest-block .speaker-icon { fill: var(--gold-bright); }
+        .asst_priest-block .speaker-icon { fill: #66E0A3; }
+        .people-block .speaker-icon { fill: #E8EBF2; }
 
         .speaker-label {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 700;
-            letter-spacing: 2px;
+            letter-spacing: 2.5px;
             text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
-        .deacon-block .speaker-label { color: #FFA0A0; }
+        .deacon-block .speaker-label { color: #FF8585; }
         .priest-block .speaker-label { color: var(--gold-bright); }
-        .asst_priest-block .speaker-label { color: #8FDEAE; }
-        .people-block .speaker-label { color: #E0E0E0; }
+        .asst_priest-block .speaker-label { color: #66E0A3; }
+        .people-block .speaker-label { color: #E8EBF2; }
 
         .geez {
             font-family: 'Abyssinica SIL', serif;
-            font-size: 2.1rem;
-            line-height: 1.35;
+            font-size: 2.2rem;
+            line-height: 1.4;
             color: var(--ivory);
             font-weight: 700;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             white-space: pre-line;
+            text-shadow: 0 2px 12px rgba(253, 251, 247, 0.15);
         }
 
         .amharic {
             font-family: 'Noto Sans Ethiopic', sans-serif;
-            font-size: 1.25rem;
-            line-height: 1.5;
+            font-size: 1.35rem;
+            line-height: 1.6;
             color: var(--silver);
-            padding-left: 6px;
-            border-left: 1px solid rgba(197, 160, 89, 0.2);
+            padding-left: 12px;
+            border-left: 2px solid rgba(212, 175, 55, 0.2);
             white-space: pre-line;
         }
 
         .insight-box {
             margin-top: 25px;
-            background: rgba(197, 160, 89, 0.03);
-            border: 1px solid rgba(197, 160, 89, 0.1);
-            padding: 24px 30px;
+            background: linear-gradient(180deg, rgba(212, 175, 55, 0.05) 0%, rgba(212, 175, 55, 0.01) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            padding: 28px 35px;
             border-radius: 20px;
             flex-shrink: 0;
+            position: relative;
         }
+        
+        /* Subtle insight flare */
+        .insight-box::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: 10%; width: 30%; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.6), transparent);
+        }
+
         .insight-header {
-            font-size: 0.75rem;
-            color: var(--gold);
+            font-size: 0.8rem;
+            color: var(--gold-bright);
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .insight-text {
-            font-size: 1.1rem;
-            line-height: 1.6;
+            font-size: 1.15rem;
+            line-height: 1.65;
             color: var(--ivory);
-            font-weight: 400;
+            font-weight: 300;
         }
 
         .footer {
             margin-top: 25px;
             text-align: center;
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.15);
-            letter-spacing: 3px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 4px;
             text-transform: uppercase;
             flex-shrink: 0;
         }
 
         /* Auto-sizing based on dialogue entries */
-        .dialogue-flow.many-entries .geez { font-size: 1.6rem; }
-        .dialogue-flow.many-entries .amharic { font-size: 1.1rem; }
-        .dialogue-flow.many-entries .speaker-block { padding: 10px 10px 10px 28px; }
+        .dialogue-flow.many-entries .geez { font-size: 1.7rem; }
+        .dialogue-flow.many-entries .amharic { font-size: 1.15rem; }
+        .dialogue-flow.many-entries .speaker-block { padding: 12px 15px 12px 30px; }
+        .dialogue-flow.many-entries { gap: 20px; }
         
-        .dialogue-flow.very-many-entries .geez { font-size: 1.35rem; }
-        .dialogue-flow.very-many-entries .amharic { font-size: 1rem; line-height: 1.3; }
-        .dialogue-flow.very-many-entries .speaker-block { padding: 8px 8px 8px 20px; border-radius: 8px;}
-        .dialogue-flow.very-many-entries { gap: 15px; }
+        .dialogue-flow.very-many-entries .geez { font-size: 1.4rem; }
+        .dialogue-flow.very-many-entries .amharic { font-size: 1.05rem; line-height: 1.4; }
+        .dialogue-flow.very-many-entries .speaker-block { padding: 10px 10px 10px 25px; border-radius: 0 12px 12px 0;}
+        .dialogue-flow.very-many-entries { gap: 16px; }
+        .dialogue-flow.very-many-entries .speaker-label { font-size: 0.8rem; }
+        .dialogue-flow.very-many-entries .speaker-icon { width: 18px; height: 18px; }
 
     </style>
 </head>
@@ -256,7 +310,10 @@
         </div>
 
         <div class="insight-box">
-            <div class="insight-header">❖ መንፈሳዊ ትምህርት</div>
+            <div class="insight-header">
+                 <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold-bright)"><path d="M12 2L15 9l7 3-7 3-3 7-3-7-7-3 7-3z"/></svg>
+                 መንፈሳዊ ትምህርት
+            </div>
             <div class="insight-text">{{teaching_insight}}</div>
         </div>
 
@@ -282,7 +339,7 @@
             'priest': '<svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 2h2v5h5v2h-5v5h5v2h-5v6h-2v-6H6v-2h5v-5H6V7h5V2z"/></svg>',
             'deacon': '<svg class="speaker-icon" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z"/></svg>',
             'people': '<svg class="speaker-icon" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>',
-            'asst_priest': '<svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 2h2v5h5v2h-5v5h5v2h-5v6h-2v-6H6v-2h5v-5H6V7h5V2z"/></svg>' // Same icon as priest
+            'asst_priest': '<svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 2h2v5h5v2h-5v5h5v2h-5v6h-2v-6H6v-2h5v-5H6V7h5V2z"/></svg>'
         };
         
         const labels = {
