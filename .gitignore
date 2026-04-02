@@ -1,0 +1,21 @@
+# Node
+node_modules/
+
+# Output images (never commit locally generated PNGs)
+output/
+
+# Temp render file
+templates/temp_render.html
+templates/temp_test.html
+
+# Scratch files
+convert.js
+test_gen.js
+preview_premium.png
+
+# Env secrets
+.env
+
+# OS
+.DS_Store
+Thumbs.db
