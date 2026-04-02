@@ -194,56 +194,42 @@
         .asst_priest-block::before { background: linear-gradient(180deg, var(--emerald)    0%, rgba(46,139,87,0.1) 100%); }
         .people-block::before    { background: linear-gradient(180deg, var(--silver)        0%, rgba(184,175,163,0.1) 100%); }
 
-        /* ── SPEAKER HEADER (Engraved Badges) ── */
+        /* ── SPEAKER HEADER (Perfect Minimal Design) ── */
         .speaker-header {
             display: flex;
             align-items: center;
-            margin-bottom: 14px;
-            position: relative;
+            margin-bottom: 12px;
         }
 
         .speaker-label {
-            display: inline-flex;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 4px 12px 5px 12px;
-            border-radius: 6px;
-            background: rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 2px 8px rgba(0,0,0,0.4);
         }
 
         .speaker-amh {
-            font-family: 'Abyssinica SIL', serif;
+            font-family: 'Noto Sans Ethiopic', sans-serif;
             font-size: 0.95rem;
-            letter-spacing: 0.02em;
-            font-weight: 400;
+            letter-spacing: 0.03em;
+            font-weight: 500;
+            text-transform: none;
         }
 
-        .speaker-en {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+        .speaker-divider {
+            margin: 0 10px;
+            opacity: 0.3;
+            font-weight: 300;
+            font-size: 0.8rem;
         }
 
-        .speaker-dot {
-            font-size: 0.6rem;
-            opacity: 0.4;
-        }
-
-        .deacon-block .speaker-label { border-bottom: 1px solid rgba(255, 154, 154, 0.35); }
-        .deacon-block .speaker-amh, .deacon-block .speaker-en, .deacon-block .speaker-dot { color: #FF9A9A; }
-
-        .priest-block .speaker-label { border-bottom: 1px solid rgba(232, 208, 158, 0.35); }
-        .priest-block .speaker-amh, .priest-block .speaker-en, .priest-block .speaker-dot { color: var(--gold-bright); }
-
-        .asst_priest-block .speaker-label { border-bottom: 1px solid rgba(143, 222, 174, 0.35); }
-        .asst_priest-block .speaker-amh, .asst_priest-block .speaker-en, .asst_priest-block .speaker-dot { color: #8FDEAE; }
-
-        .people-block .speaker-label { border-bottom: 1px solid rgba(216, 216, 216, 0.35); }
-        .people-block .speaker-amh, .people-block .speaker-en, .people-block .speaker-dot { color: #D8D8D8; }
+        .deacon-block    .speaker-label { color: #FF9A9A; }
+        .priest-block    .speaker-label { color: var(--gold-bright); }
+        .asst_priest-block .speaker-label { color: #8FDEAE; }
+        .people-block    .speaker-label { color: #D8D8D8; }
 
         /* ── GE'EZ TEXT: Metallic Gold-to-Ivory Etching ── */
         .geez {
@@ -355,7 +341,7 @@
             <div class="speaker-block deacon-block" id="deacon-box">
                 <div class="speaker-header">
                     <span class="speaker-label">
-                        <span class="speaker-amh">ዲያቆን</span> <span class="speaker-dot">•</span> <span class="speaker-en">DEACON</span>
+                        <span class="speaker-amh">ዲያቆን</span> <span class="speaker-divider">|</span> DEACON
                     </span>
                 </div>
                 <div class="geez" id="deacon-geez">{{deacon_geez}}</div>
@@ -365,7 +351,7 @@
             <div class="speaker-block priest-block" id="priest-box">
                 <div class="speaker-header">
                     <span class="speaker-label">
-                        <span class="speaker-amh">ካህን</span> <span class="speaker-dot">•</span> <span class="speaker-en">PRIEST</span>
+                        <span class="speaker-amh">ካህን</span> <span class="speaker-divider">|</span> PRIEST
                     </span>
                 </div>
                 <div class="geez" id="priest-geez">{{priest_geez}}</div>
@@ -375,7 +361,7 @@
             <div class="speaker-block people-block" id="people-box">
                 <div class="speaker-header">
                     <span class="speaker-label">
-                        <span class="speaker-amh">ሕዝብ</span> <span class="speaker-dot">•</span> <span class="speaker-en">PEOPLE</span>
+                        <span class="speaker-amh">ሕዝብ</span> <span class="speaker-divider">|</span> PEOPLE
                     </span>
                 </div>
                 <div class="geez" id="people-geez">{{people_geez}}</div>
@@ -406,10 +392,10 @@
         }
 
         const labels = {
-            'priest':     '<span class="speaker-amh">ካህን</span> <span class="speaker-dot">•</span> <span class="speaker-en">PRIEST</span>',
-            'deacon':     '<span class="speaker-amh">ዲያቆን</span> <span class="speaker-dot">•</span> <span class="speaker-en">DEACON</span>',
-            'people':     '<span class="speaker-amh">ሕዝብ</span> <span class="speaker-dot">•</span> <span class="speaker-en">PEOPLE</span>',
-            'asst_priest':'<span class="speaker-amh">ንፍቅ ካህን</span> <span class="speaker-dot">•</span> <span class="speaker-en">ASST. PRIEST</span>'
+            'priest':     '<span class="speaker-amh">ካህን</span> <span class="speaker-divider">|</span> PRIEST',
+            'deacon':     '<span class="speaker-amh">ዲያቆን</span> <span class="speaker-divider">|</span> DEACON',
+            'people':     '<span class="speaker-amh">ሕዝብ</span> <span class="speaker-divider">|</span> PEOPLE',
+            'asst_priest':'<span class="speaker-amh">ንፍቅ ካህን</span> <span class="speaker-divider">|</span> ASST. PRIEST'
         };
 
         const dialogueDataStr = document.getElementById('dialogue-data').innerText.trim();
