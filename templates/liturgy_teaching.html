@@ -32,10 +32,11 @@
             padding: 55px 0;
             background-color: var(--midnight);
             background-image:
-                radial-gradient(ellipse at 18% 8%,  rgba(139, 0, 0, 0.22) 0px, transparent 52%),
-                radial-gradient(ellipse at 82% 92%, rgba(212, 175, 55, 0.12) 0px, transparent 50%),
-                radial-gradient(ellipse at 50% 48%, rgba(6,  9, 15, 0.96) 0px, transparent 100%),
-                linear-gradient(170deg, var(--midnight) 0%, var(--charcoal-deep) 100%);
+                radial-gradient(circle at 10% 15%, rgba(139, 0, 0, 0.18) 0%, transparent 60%),
+                radial-gradient(ellipse at 85% 85%, rgba(212, 175, 55, 0.08) 0%, transparent 55%),
+                radial-gradient(ellipse at 70% 30%, rgba(46, 139, 87, 0.04) 0%, transparent 45%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 9, 15, 0.92) 0%, transparent 100%),
+                linear-gradient(145deg, var(--midnight) 0%, var(--charcoal-deep) 100%);
             font-family: 'Noto Sans Ethiopic', 'Inter', sans-serif;
             display: flex;
             align-items: center;
@@ -70,11 +71,13 @@
             flex-direction: column;
             position: relative;
             z-index: 10;
-            /* Sacred Glow */
+            /* Sacred Glow & Prismatic Dispersion */
             box-shadow:
                 0 0 0 1px transparent,
                 0 70px 140px rgba(0, 0, 0, 0.75),
-                0 0 80px rgba(212, 175, 55, 0.06),
+                -1.5px 0 0 rgba(139, 0, 0, 0.15),
+                1.5px 0 0 rgba(46, 139, 87, 0.15),
+                0 0 80px rgba(212, 175, 55, 0.08),
                 inset 0 1px 0 rgba(212, 175, 55, 0.12),
                 inset 0 -1px 0 rgba(0, 0, 0, 0.4);
         }
@@ -226,6 +229,8 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            /* Optic Light Bleed */
+            filter: drop-shadow(0px 0px 18px rgba(212, 175, 55, 0.25));
         }
 
         /* ── AMHARIC TEXT ── */
@@ -235,7 +240,8 @@
             line-height: 1.618;
             letter-spacing: 0.01em;
             color: var(--silver);
-            padding-left: 8px;
+            opacity: 0.75;
+            padding-left: 14px;
             border-left: 1.5px solid rgba(197, 160, 89, 0.22);
             white-space: pre-line;
         }
