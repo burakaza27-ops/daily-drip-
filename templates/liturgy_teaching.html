@@ -18,6 +18,7 @@
             --ivory: #FAF7F2;
             --silver: #B8AFA3;
             --muted: #7A7268;
+            --emerald: #2E8B57; /* asst_priest color */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -51,12 +52,13 @@
         .card {
             width: 920px;
             min-height: 1150px;
+            max-height: 1250px;
             background: var(--glass-bg);
             backdrop-filter: blur(28px);
             -webkit-backdrop-filter: blur(28px);
             border: 1px solid var(--glass-border);
             border-radius: 44px;
-            padding: 60px 75px;
+            padding: 50px 70px;
             display: flex;
             flex-direction: column;
             position: relative;
@@ -64,9 +66,10 @@
             box-shadow:
                 0 60px 120px rgba(0,0,0,0.7),
                 inset 0 1px 0 rgba(197, 160, 89, 0.08);
+            overflow: hidden;
         }
 
-        .header { text-align: center; margin-bottom: 40px; }
+        .header { text-align: center; margin-bottom: 30px; flex-shrink: 0; }
         .step-tracker {
             display: inline-block;
             background: rgba(139, 0, 0, 0.2);
@@ -90,15 +93,20 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 40px;
+            gap: 25px;
+            overflow-y: hidden;
         }
 
         .speaker-block {
             position: relative;
             padding-left: 28px;
+            background: rgba(255,255,255,0.015);
+            border-radius: 12px;
+            padding: 15px 15px 15px 28px;
+            border: 1px solid rgba(255,255,255,0.03);
         }
-        
-        /* Hide entire block if no Geez text */
+
+        /* Hide entire block if no Geez text initially */
         .speaker-block:empty, 
         .speaker-block[data-empty="true"] {
             display: none !important;
@@ -108,83 +116,106 @@
             content: "";
             position: absolute;
             left: 0;
-            top: 8px;
-            bottom: 8px;
+            top: 15px;
+            bottom: 15px;
             width: 3px;
             border-radius: 3px;
         }
 
         .deacon-block::before { background: linear-gradient(180deg, var(--imperial-red), transparent); }
         .priest-block::before { background: linear-gradient(180deg, var(--gold), transparent); }
+        .asst_priest-block::before { background: linear-gradient(180deg, var(--emerald), transparent); }
         .people-block::before { background: linear-gradient(180deg, var(--silver), transparent); }
 
         .speaker-header {
             display: flex;
             align-items: center;
-            gap: 14px;
-            margin-bottom: 12px;
+            gap: 12px;
+            margin-bottom: 8px;
         }
         .speaker-icon {
-            width: 24px;
-            height: 24px;
-            fill: var(--gold);
-            opacity: 0.7;
+            width: 20px;
+            height: 20px;            
+            opacity: 0.8;
         }
+        .deacon-block .speaker-icon { fill: var(--imperial-red); }
+        .priest-block .speaker-icon { fill: var(--gold); }
+        .asst_priest-block .speaker-icon { fill: var(--emerald); }
+        .people-block .speaker-icon { fill: var(--silver); }
+
         .speaker-label {
-            font-size: 0.9rem;
-            color: var(--gold-bright);
+            font-size: 0.85rem;
             font-weight: 700;
             letter-spacing: 2px;
             text-transform: uppercase;
         }
+        .deacon-block .speaker-label { color: #FFA0A0; }
+        .priest-block .speaker-label { color: var(--gold-bright); }
+        .asst_priest-block .speaker-label { color: #8FDEAE; }
+        .people-block .speaker-label { color: #E0E0E0; }
 
         .geez {
             font-family: 'Abyssinica SIL', serif;
-            font-size: 2.3rem;
-            line-height: 1.3;
+            font-size: 2.1rem;
+            line-height: 1.35;
             color: var(--ivory);
             font-weight: 700;
             margin-bottom: 6px;
+            white-space: pre-line;
         }
 
         .amharic {
             font-family: 'Noto Sans Ethiopic', sans-serif;
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             line-height: 1.5;
             color: var(--silver);
             padding-left: 6px;
             border-left: 1px solid rgba(197, 160, 89, 0.2);
+            white-space: pre-line;
         }
 
         .insight-box {
-            margin-top: 30px;
+            margin-top: 25px;
             background: rgba(197, 160, 89, 0.03);
             border: 1px solid rgba(197, 160, 89, 0.1);
-            padding: 28px 35px;
+            padding: 24px 30px;
             border-radius: 20px;
+            flex-shrink: 0;
         }
         .insight-header {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--gold);
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .insight-text {
-            font-size: 1.15rem;
-            line-height: 1.7;
+            font-size: 1.1rem;
+            line-height: 1.6;
             color: var(--ivory);
             font-weight: 400;
         }
 
         .footer {
-            margin-top: 30px;
+            margin-top: 25px;
             text-align: center;
             font-size: 0.7rem;
             color: rgba(255, 255, 255, 0.15);
             letter-spacing: 3px;
             text-transform: uppercase;
+            flex-shrink: 0;
         }
+
+        /* Auto-sizing based on dialogue entries */
+        .dialogue-flow.many-entries .geez { font-size: 1.6rem; }
+        .dialogue-flow.many-entries .amharic { font-size: 1.1rem; }
+        .dialogue-flow.many-entries .speaker-block { padding: 10px 10px 10px 28px; }
+        
+        .dialogue-flow.very-many-entries .geez { font-size: 1.35rem; }
+        .dialogue-flow.very-many-entries .amharic { font-size: 1rem; line-height: 1.3; }
+        .dialogue-flow.very-many-entries .speaker-block { padding: 8px 8px 8px 20px; border-radius: 8px;}
+        .dialogue-flow.very-many-entries { gap: 15px; }
+
     </style>
 </head>
 <body>
@@ -194,8 +225,8 @@
             <div class="liturgy-title">{{liturgy_part}}</div>
         </div>
 
-        <div class="dialogue-flow">
-            <!-- Deacon -->
+        <div class="dialogue-flow" id="dialogue-flow">
+            <!-- Legacy Static Blocks (Fallback) -->
             <div class="speaker-block deacon-block" id="deacon-box">
                 <div class="speaker-header">
                     <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z"/></svg>
@@ -205,7 +236,6 @@
                 <div class="amharic" id="deacon-amh">{{deacon_amharic}}</div>
             </div>
 
-            <!-- Priest -->
             <div class="speaker-block priest-block" id="priest-box">
                 <div class="speaker-header">
                     <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 2h2v5h5v2h-5v5h5v2h-5v6h-2v-6H6v-2h5v-5H6V7h5V2z"/></svg>
@@ -215,7 +245,6 @@
                 <div class="amharic" id="priest-amh">{{priest_amharic}}</div>
             </div>
 
-            <!-- People -->
             <div class="speaker-block people-block" id="people-box">
                 <div class="speaker-header">
                     <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
@@ -234,23 +263,76 @@
         <div class="footer">EOTC Media Studio • ቅዳሴ ሐዋርያት</div>
     </div>
 
+    <!-- Data Injection for Dynamic Dialogue -->
+    <script id="dialogue-data" type="application/json">
+{{dialogue_json}}
+    </script>
+
     <script>
-        // Use JS to hide empty blocks because CSS alone (even with :has) 
-        // can be tricky with templated strings in Puppeteer.
         function hideIfEmpty(boxId, geezId, amhId) {
             const box = document.getElementById(boxId);
-            const geez = document.getElementById(geezId).innerText.trim();
-            const amh = document.getElementById(amhId).innerText.trim();
-            
+            const geez = document.getElementById(geezId).innerText.trim();            
             // If the template string is literally empty or just the placeholder
             if (!geez || geez === '{{' + geezId.replace('-','_') + '}}') {
                 box.style.display = 'none';
             }
         }
+
+        const icons = {
+            'priest': '<svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 2h2v5h5v2h-5v5h5v2h-5v6h-2v-6H6v-2h5v-5H6V7h5V2z"/></svg>',
+            'deacon': '<svg class="speaker-icon" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z"/></svg>',
+            'people': '<svg class="speaker-icon" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>',
+            'asst_priest': '<svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 2h2v5h5v2h-5v5h5v2h-5v6h-2v-6H6v-2h5v-5H6V7h5V2z"/></svg>' // Same icon as priest
+        };
         
-        hideIfEmpty('deacon-box', 'deacon-geez', 'deacon-amh');
-        hideIfEmpty('priest-box', 'priest-geez', 'priest-amh');
-        hideIfEmpty('people-box', 'people-geez', 'people-amh');
+        const labels = {
+            'priest': 'ካህን — Priest',
+            'deacon': 'ዲያቆን — Deacon',
+            'people': 'ሕዝብ — People',
+            'asst_priest': 'ንፍቅ ካህን — Asst. Priest'
+        };
+
+        const dialogueDataStr = document.getElementById('dialogue-data').innerText.trim();
+        
+        if (dialogueDataStr && dialogueDataStr !== '{{dialogue_json}}') {
+            // New dynamic dialogue format
+            const dialogueFlow = document.getElementById('dialogue-flow');
+            dialogueFlow.innerHTML = ''; // Clear fallback boxes
+            
+            try {
+                const dialogueArray = JSON.parse(dialogueDataStr);
+                
+                // Adjust sizes for lots of text
+                if (dialogueArray.length >= 6) {
+                    dialogueFlow.classList.add('very-many-entries');
+                } else if (dialogueArray.length >= 4) {
+                    dialogueFlow.classList.add('many-entries');
+                }
+
+                dialogueArray.forEach(turn => {
+                    const block = document.createElement('div');
+                    const role = turn.speaker || 'priest'; // default
+                    block.className = `speaker-block ${role}-block`;
+                    
+                    block.innerHTML = `
+                        <div class="speaker-header">
+                            ${icons[role] || icons['priest']}
+                            <span class="speaker-label">${labels[role] || labels['priest']}</span>
+                        </div>
+                        <div class="geez">${turn.geez || ''}</div>
+                        ${turn.amharic ? `<div class="amharic">${turn.amharic}</div>` : ''}
+                    `;
+                    dialogueFlow.appendChild(block);
+                });
+            } catch (e) {
+                console.error("JSON Parsing failed", e);
+            }
+        } else {
+            // Legacy flat format
+            hideIfEmpty('deacon-box', 'deacon-geez', 'deacon-amh');
+            hideIfEmpty('priest-box', 'priest-geez', 'priest-amh');
+            hideIfEmpty('people-box', 'people-geez', 'people-amh');
+        }
     </script>
 </body>
 </html>

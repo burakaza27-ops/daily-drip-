@@ -69,7 +69,14 @@ async function refineSegmentWithAI(segment) {
 
 // --- Spiritual Insight Generation (AI) ---
 async function generateInsight(segment) {
-    const prompt = `Output AMHARIC ONLY. Explaining spiritual mystery of this exchange: ${segment.liturgy_part}\nDeacon: ${segment.deacon_geez}\nPriest: ${segment.priest_geez}\nPeople: ${segment.people_geez}`;
+    let rolesContent = '';
+    if (segment.dialogue && Array.isArray(segment.dialogue)) {
+        rolesContent = segment.dialogue.map(turn => `${turn.speaker}: ${turn.geez}`).join('\n');
+    } else {
+        rolesContent = `Deacon: ${segment.deacon_geez}\nPriest: ${segment.priest_geez}\nPeople: ${segment.people_geez}`;
+    }
+
+    const prompt = `Output AMHARIC ONLY. Explaining spiritual mystery of this exchange: ${segment.liturgy_part}\n${rolesContent}`;
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return "ይህ ቅዱስ ውይይት የሰማያዊ አንድነት መገለጫ ነው።";
 
@@ -94,9 +101,13 @@ async function renderHtmlToImage(segment, insight, stepCurrent, stepTotal) {
     const tplPath = path.resolve('./templates/liturgy_teaching.html');
     let html = await fs.readFile(tplPath, 'utf-8');
 
+    // Handle string injection safe for application/json block
+    const dialogueJsonStr = segment.dialogue ? JSON.stringify(segment.dialogue).replace(/</g, '\\u003c') : '';
+
     html = html
         .replace('{{step_current}}', stepCurrent).replace('{{step_total}}', stepTotal)
         .replace('{{liturgy_part}}', escapeHtml(segment.liturgy_part))
+        .replace('{{dialogue_json}}', dialogueJsonStr || '{{dialogue_json}}') // Keep placeholder if no dialogue
         .replace('{{deacon_geez}}', (segment.deacon_geez || '').trim())
         .replace('{{deacon_amharic}}', (segment.deacon_amharic || '').trim())
         .replace('{{priest_geez}}', (segment.priest_geez || '').trim())
@@ -123,7 +134,7 @@ async function renderHtmlToImage(segment, insight, stepCurrent, stepTotal) {
         const outputDir = path.resolve('./output');
         await fs.mkdir(outputDir, { recursive: true });
 
-        const outputPath = path.join(outputDir, `liturgy_${segment.id}_${Date.now()}.png`);
+        const outputPath = path.join(outputDir, `liturgy_${segment.id || Date.now()}_${Date.now()}.png`);
         await page.screenshot({ path: outputPath, type: 'png' });
         return outputPath;
     } finally {
@@ -193,18 +204,37 @@ async function main() {
         const outputPath = await renderHtmlToImage(segment, insight, stepCurrent, stepTotal);
 
         // Build HTML-Safe Caption
+        const labels = {
+            'priest': 'ካህን',
+            'deacon': 'ዲያቆን',
+            'people': 'ሕዝብ',
+            'asst_priest': 'ንፍቅ ካህን'
+        };
+
         let rolesText = "";
-        if (segment.deacon_geez) {
-            rolesText += `✦ <b>ዲያቆን:</b> ${escapeHtml(segment.deacon_geez)}\n${escapeHtml(segment.deacon_amharic)}\n\n`;
-        }
-        if (segment.priest_geez) {
-            rolesText += `✦ <b>ካህን:</b> ${escapeHtml(segment.priest_geez)}\n${escapeHtml(segment.priest_amharic)}\n\n`;
-        }
-        if (segment.people_geez) {
-            rolesText += `✦ <b>ሕዝብ:</b> ${escapeHtml(segment.people_geez)}\n${escapeHtml(segment.people_amharic)}\n\n`;
+        
+        if (segment.dialogue && Array.isArray(segment.dialogue)) {
+            for (const turn of segment.dialogue) {
+                const label = labels[turn.speaker] || labels['priest'];
+                rolesText += `✦ <b>${label}:</b> ${escapeHtml(turn.geez)}\n`;
+                if (turn.amharic) rolesText += `${escapeHtml(turn.amharic)}\n`;
+                rolesText += `\n`;
+            }
+        } else {
+            // Legacy flat extraction
+            if (segment.deacon_geez) {
+                rolesText += `✦ <b>ዲያቆን:</b> ${escapeHtml(segment.deacon_geez)}\n${escapeHtml(segment.deacon_amharic)}\n\n`;
+            }
+            if (segment.priest_geez) {
+                rolesText += `✦ <b>ካህን:</b> ${escapeHtml(segment.priest_geez)}\n${escapeHtml(segment.priest_amharic)}\n\n`;
+            }
+            if (segment.people_geez) {
+                rolesText += `✦ <b>ሕዝብ:</b> ${escapeHtml(segment.people_geez)}\n${escapeHtml(segment.people_amharic)}\n\n`;
+            }
         }
 
-        const caption = `<b>❖ ቅዳሴ ሐዋርያት — ክፍል ${stepCurrent}/${stepTotal} ❖</b>\n\n📖 <b>${escapeHtml(segment.liturgy_part)}</b>\n\n${rolesText}✨ ${escapeHtml(insight)}\n\nለመንፈሳዊ ቤተሰብዎ ያካፍሉ 🕊️`;
+        const anaphoraName = segment.liturgy_part.split('|')[0] || "ቅዳሴ ሐዋርያ";
+        const caption = `<b>❖ ${anaphoraName.trim()} — ክፍል ${stepCurrent}/${stepTotal} ❖</b>\n\n📖 <b>${escapeHtml(segment.liturgy_part)}</b>\n\n${rolesText}✨ ${escapeHtml(insight)}\n\nለመንፈሳዊ ቤተሰብዎ ያካፍሉ 🕊️`;
 
         await broadcastToTelegram(outputPath, caption);
         console.log(`✅ ALL TASKS COMPLETE`);
