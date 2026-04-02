@@ -195,7 +195,7 @@ async function broadcastToTelegram(imagePath, caption) {
 async function main() {
     const args = process.argv.slice(2);
     const contentType = args.find(a => a.startsWith('--type='))?.split('=')[1] || 'default';
-    const anaphoraType = args.find(a => a.startsWith('--anaphora='))?.split('=')[1] || 'hawaryat';
+    const anaphoraType = args.find(a => a.startsWith('--anaphora='))?.split('=')[1] || 'hawaryats';
 
     if (contentType === 'liturgy_teaching') {
         let { segment, stepCurrent, stepTotal } = await loadSequentialSegment(anaphoraType);

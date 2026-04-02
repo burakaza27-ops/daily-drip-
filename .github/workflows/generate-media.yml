@@ -14,10 +14,10 @@ on:
       anaphora_type:
         description: 'Which Anaphora to teach (for liturgy_teaching only)'
         required: false
-        default: 'hawaryat'
+        default: 'hawaryats'
         type: choice
         options:
-          - hawaryat
+          - hawaryats
 
 jobs:
   generate-media:
