@@ -118,6 +118,34 @@
             z-index: 2;
         }
 
+        /* ── Anamorphic Crystal Glint ── */
+        .card-glint {
+            position: absolute;
+            inset: 0;
+            border-radius: 48px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 3;
+        }
+        .card-glint::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 45%,
+                rgba(255, 255, 255, 0.04) 48%,
+                rgba(255, 255, 255, 0.12) 50%,
+                rgba(255, 255, 255, 0.04) 52%,
+                transparent 55%
+            );
+            transform: rotate(-10deg);
+            opacity: 0.8;
+        }
+
         /* ── HEADER ── */
         .header {
             text-align: center;
@@ -194,7 +222,7 @@
         .asst_priest-block::before { background: linear-gradient(180deg, var(--emerald)    0%, rgba(46,139,87,0.1) 100%); }
         .people-block::before    { background: linear-gradient(180deg, var(--silver)        0%, rgba(184,175,163,0.1) 100%); }
 
-        /* ── SPEAKER HEADER (Perfect Minimal Design) ── */
+        /* ── SPEAKER HEADER (Sacred 2026 Perfection) ── */
         .speaker-header {
             display: flex;
             align-items: center;
@@ -203,27 +231,31 @@
 
         .speaker-label {
             font-family: 'Inter', sans-serif;
-            font-size: 0.72rem;
+            font-size: 0.68rem;
             font-weight: 700;
-            letter-spacing: 3px;
+            letter-spacing: 2.2px;
             text-transform: uppercase;
-            display: flex;
-            align-items: center;
+            display: inline-flex;
+            align-items: baseline; /* Critical for perfect alignment */
+            gap: 12px;
         }
 
         .speaker-amh {
             font-family: 'Noto Sans Ethiopic', sans-serif;
-            font-size: 0.95rem;
-            letter-spacing: 0.03em;
-            font-weight: 500;
+            font-size: 0.96rem;
+            letter-spacing: 0.04em;
+            font-weight: 600;
             text-transform: none;
+            /* Nuanced lifting for Amharic baseline */
+            position: relative;
+            top: 1.5px;
         }
 
         .speaker-divider {
-            margin: 0 10px;
-            opacity: 0.3;
-            font-weight: 300;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
+            color: var(--gold-etched);
+            opacity: 0.6;
+            transform: translateY(-1px);
         }
 
         .deacon-block    .speaker-label { color: #FF9A9A; }
@@ -245,8 +277,10 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            /* Optic Light Bleed */
-            filter: drop-shadow(0px 0px 18px rgba(212, 175, 55, 0.25));
+            /* Chromatic Light Bleed (Dispersion simulation) */
+            filter: 
+                drop-shadow(0px 0px 1px rgba(139, 0, 0, 0.3)) /* Red top-throb */
+                drop-shadow(0px 0px 18px rgba(212, 175, 55, 0.28));
         }
 
         /* ── AMHARIC TEXT ── */
@@ -330,6 +364,7 @@
 </head>
 <body>
     <div class="card">
+        <div class="card-glint"></div>
         <div class="header">
             <div class="step-tracker">PART {{step_current}} OF {{step_total}}</div>
             <div class="liturgy-title">{{liturgy_part}}</div>
@@ -341,7 +376,7 @@
             <div class="speaker-block deacon-block" id="deacon-box">
                 <div class="speaker-header">
                     <span class="speaker-label">
-                        <span class="speaker-amh">ዲያቆን</span> <span class="speaker-divider">|</span> DEACON
+                        <span class="speaker-amh">ዲያቆን</span> <span class="speaker-divider">◆</span> DEACON
                     </span>
                 </div>
                 <div class="geez" id="deacon-geez">{{deacon_geez}}</div>
@@ -351,7 +386,7 @@
             <div class="speaker-block priest-block" id="priest-box">
                 <div class="speaker-header">
                     <span class="speaker-label">
-                        <span class="speaker-amh">ካህን</span> <span class="speaker-divider">|</span> PRIEST
+                        <span class="speaker-amh">ካህን</span> <span class="speaker-divider">◆</span> PRIEST
                     </span>
                 </div>
                 <div class="geez" id="priest-geez">{{priest_geez}}</div>
@@ -361,7 +396,7 @@
             <div class="speaker-block people-block" id="people-box">
                 <div class="speaker-header">
                     <span class="speaker-label">
-                        <span class="speaker-amh">ሕዝብ</span> <span class="speaker-divider">|</span> PEOPLE
+                        <span class="speaker-amh">ሕዝብ</span> <span class="speaker-divider">◆</span> PEOPLE
                     </span>
                 </div>
                 <div class="geez" id="people-geez">{{people_geez}}</div>
@@ -392,10 +427,10 @@
         }
 
         const labels = {
-            'priest':     '<span class="speaker-amh">ካህን</span> <span class="speaker-divider">|</span> PRIEST',
-            'deacon':     '<span class="speaker-amh">ዲያቆን</span> <span class="speaker-divider">|</span> DEACON',
-            'people':     '<span class="speaker-amh">ሕዝብ</span> <span class="speaker-divider">|</span> PEOPLE',
-            'asst_priest':'<span class="speaker-amh">ንፍቅ ካህን</span> <span class="speaker-divider">|</span> ASST. PRIEST'
+            'priest':     '<span class="speaker-amh">ካህን</span> <span class="speaker-divider">◆</span> PRIEST',
+            'deacon':     '<span class="speaker-amh">ዲያቆን</span> <span class="speaker-divider">◆</span> DEACON',
+            'people':     '<span class="speaker-amh">ሕዝብ</span> <span class="speaker-divider">◆</span> PEOPLE',
+            'asst_priest':'<span class="speaker-amh">ንፍቅ ካህን</span> <span class="speaker-divider">◆</span> ASST. PRIEST'
         };
 
         const dialogueDataStr = document.getElementById('dialogue-data').innerText.trim();
