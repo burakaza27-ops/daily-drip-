@@ -76,7 +76,7 @@ async function generateInsight(segment) {
         rolesContent = `Deacon: ${segment.deacon_geez}\nPriest: ${segment.priest_geez}\nPeople: ${segment.people_geez}`;
     }
 
-    const prompt = `Output AMHARIC ONLY. Explaining spiritual mystery of this exchange: ${segment.liturgy_part}\n${rolesContent}`;
+    const prompt = `Output AMHARIC ONLY. Explain the spiritual mystery of this exchange profoundly and accurately. MUST BE CONCISE: NO MORE THAN 3 SENTENCES OR LINES. Do not use filler words. Text: ${segment.liturgy_part}\n${rolesContent}`;
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return "ይህ ቅዱስ ውይይት የሰማያዊ አንድነት መገለጫ ነው።";
 
