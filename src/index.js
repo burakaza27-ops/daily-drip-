@@ -76,7 +76,11 @@ async function generateInsight(segment) {
         rolesContent = `Deacon: ${segment.deacon_geez}\nPriest: ${segment.priest_geez}\nPeople: ${segment.people_geez}`;
     }
 
-    const prompt = `Output AMHARIC ONLY. Explaining spiritual mystery of this exchange: ${segment.liturgy_part}\n${rolesContent}`;
+    const prompt = `You are an EOTC scholar. Briefly explain the deep spiritual mystery of this Liturgy exchange in ONE short paragraph (max 180 characters).
+Output Amharic only. Ensure it is perfectly accurate and concise.
+Context: ${segment.liturgy_part}
+Exchange:
+${rolesContent}`;
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return "ይህ ቅዱስ ውይይት የሰማያዊ አንድነት መገለጫ ነው።";
 
@@ -101,19 +105,39 @@ async function renderHtmlToImage(segment, insight, stepCurrent, stepTotal) {
     const tplPath = path.resolve('./templates/liturgy_teaching.html');
     let html = await fs.readFile(tplPath, 'utf-8');
 
-    // Handle string injection safe for application/json block
-    const dialogueJsonStr = segment.dialogue ? JSON.stringify(segment.dialogue).replace(/</g, '\\u003c') : '';
+    // Build Dialogue HTML
+    let dialogueHtmlContent = '';
+    const turns = (segment.dialogue && Array.isArray(segment.dialogue)) ? segment.dialogue : [
+        { speaker: 'deacon', geez: segment.deacon_geez, amharic: segment.deacon_amharic },
+        { speaker: 'priest', geez: segment.priest_geez, amharic: segment.priest_amharic },
+        { speaker: 'people', geez: segment.people_geez, amharic: segment.people_amharic }
+    ].filter(t => t.geez);
+
+    const labels = {
+        'priest': 'ካህን — Priest',
+        'deacon': 'ዲያቆን — Deacon',
+        'people': 'ሕዝብ — People',
+        'asst_priest': 'ንፍቅ ካህን — Asst. Priest'
+    };
+
+    for (const turn of turns) {
+        const role = turn.speaker || turn.turn_speaker || 'priest';
+        const label = labels[role] || labels['priest'];
+        dialogueHtmlContent += `
+            <div class="speaker-block ${role}-block">
+                <div class="speaker-header">
+                    <span class="speaker-label">${label}</span>
+                </div>
+                <div class="geez">${(turn.geez || '').trim()}</div>
+                ${turn.amharic ? `<div class="amharic">${turn.amharic.trim()}</div>` : ''}
+            </div>`;
+    }
 
     html = html
-        .replace('{{step_current}}', stepCurrent).replace('{{step_total}}', stepTotal)
+        .replace('{{step_current}}', stepCurrent)
+        .replace('{{step_total}}', stepTotal)
         .replace('{{liturgy_part}}', escapeHtml(segment.liturgy_part))
-        .replace('{{dialogue_json}}', dialogueJsonStr || '{{dialogue_json}}') // Keep placeholder if no dialogue
-        .replace('{{deacon_geez}}', (segment.deacon_geez || '').trim())
-        .replace('{{deacon_amharic}}', (segment.deacon_amharic || '').trim())
-        .replace('{{priest_geez}}', (segment.priest_geez || '').trim())
-        .replace('{{priest_amharic}}', (segment.priest_amharic || '').trim())
-        .replace('{{people_geez}}', (segment.people_geez || '').trim())
-        .replace('{{people_amharic}}', (segment.people_amharic || '').trim())
+        .replace('{{dialogue_html}}', dialogueHtmlContent)
         .replace('{{teaching_insight}}', escapeHtml(insight));
 
     const tmpHtmlPath = path.resolve('./templates/temp_render.html');

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kidase Liturgy Teaching</title>
-    <link href="https://fonts.googleapis.com/css2?family=Abyssinica+SIL&family=Noto+Sans+Ethiopic:wght@400;500;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Abyssinica+SIL&family=Noto+Sans+Ethiopic:wght@300;400;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             /* Premium Core Palette */
@@ -16,14 +16,12 @@
             --silver: #C0C5CE;
             --ivory: #FDFBF7;
             
-            /* Deep Backgrounds */
-            --midnight: #030408;
-            --charcoal-deep: #090B10;
-            --glass-bg: rgba(9, 11, 16, 0.75);
-            --glass-border: rgba(212, 175, 55, 0.25);
-            
-            /* Text Muted */
-            --muted: #8E95A3;
+            /* Modern UI Tokens */
+            --glass-bg: rgba(15, 17, 24, 0.72);
+            --glass-border: rgba(212, 175, 55, 0.35);
+            --midnight: #050510;
+            --muted-text: #A0A0A0;
+            --glow-red: rgba(74, 4, 4, 0.5);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,9 +31,9 @@
             height: 1350px;
             background-color: var(--midnight);
             background-image:
-                radial-gradient(circle at 10% 0%, rgba(163, 29, 29, 0.28) 0vw, transparent 55vw),
-                radial-gradient(circle at 90% 100%, rgba(212, 175, 55, 0.22) 0vw, transparent 55vw),
-                linear-gradient(180deg, rgba(3, 4, 8, 0.4) 0%, rgba(9, 11, 16, 0.95) 100%);
+                radial-gradient(circle at 50% 50%, var(--glow-red) 0%, transparent 70%),
+                radial-gradient(circle at 20% 10%, rgba(212, 175, 55, 0.1) 0%, transparent 40%),
+                linear-gradient(180deg, rgba(5, 5, 16, 0.95) 0%, #000 100%);
             font-family: 'Noto Sans Ethiopic', 'Inter', sans-serif;
             display: flex;
             align-items: center;
@@ -44,79 +42,57 @@
             position: relative;
         }
 
+        /* Atmospheric depth overlay */
         body::before {
             content: "";
             position: absolute;
             inset: 0;
-            opacity: 0.04;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-            mix-blend-mode: overlay;
+            background: radial-gradient(circle at 50% 45%, rgba(74, 4, 4, 0.3) 0%, transparent 65%);
             pointer-events: none;
+            z-index: 1;
         }
 
         .card {
             width: 940px;
-            min-height: 1180px;
-            max-height: 1260px;
-            background: linear-gradient(145deg, rgba(15, 18, 25, 0.85) 0%, rgba(6, 8, 12, 0.95) 100%);
-            backdrop-filter: blur(48px);
-            -webkit-backdrop-filter: blur(48px);
+            min-height: 1080px;
+            max-height: 1280px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
             border: 1px solid var(--glass-border);
-            border-radius: 48px;
-            padding: 60px 80px;
+            border-radius: 24px;
+            padding: 50px 75px;
             display: flex;
             flex-direction: column;
             position: relative;
             z-index: 10;
-            box-shadow:
-                0 80px 160px rgba(0,0,0,0.8),
-                0 0 80px rgba(212, 175, 55, 0.05),
-                inset 0 2px 3px rgba(255, 255, 255, 0.08);
-            overflow: hidden;
-        }
-        
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 15%; right: 15%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--gold), transparent);
-            opacity: 0.8;
-            box-shadow: 0 2px 20px rgba(212, 175, 55, 0.8);
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.05);
         }
 
-        .header { text-align: center; margin-bottom: 25px; flex-shrink: 0; }
+        .header { text-align: center; margin-bottom: 30px; flex-shrink: 0; }
         
         .step-tracker {
             display: inline-flex;
             align-items: center;
-            background: linear-gradient(90deg, rgba(163, 29, 29, 0.15), rgba(163, 29, 29, 0.4), rgba(163, 29, 29, 0.15));
-            border: 1px solid rgba(212, 175, 55, 0.35);
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.4);
             color: var(--gold-bright);
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            font-weight: 700;
             letter-spacing: 4px;
-            padding: 8px 26px;
-            border-radius: 40px;
-            margin-bottom: 18px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            padding: 10px 30px;
+            border-radius: 50px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
         }
         
         .liturgy-title {
             font-family: 'Abyssinica SIL', serif;
-            font-size: 1.8rem;
+            font-size: 1.85rem;
             color: var(--gold);
             line-height: 1.4;
-            text-shadow: 0 4px 20px rgba(212, 175, 55, 0.45);
-        }
-
-        /* Gradient Divider */
-        .header::after {
-            content: '';
-            display: block;
-            width: 140px;
-            height: 1px;
-            margin: 25px auto 0;
-            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.5), transparent);
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+            font-weight: 400;
         }
 
         .dialogue-flow {
@@ -125,150 +101,115 @@
             flex-direction: column;
             justify-content: center;
             gap: 28px;
-            overflow-y: hidden;
+            overflow: visible;
         }
 
         .speaker-block {
             position: relative;
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.005) 100%);
-            border-radius: 0 16px 16px 0;
-            padding: 18px 25px 18px 35px;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            border-right: 1px solid rgba(255, 255, 255, 0.02);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.4);
-            box-shadow: rgba(0, 0, 0, 0.2) 0px 10px 30px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 20px;
+            padding: 24px 35px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
             transition: all 0.3s ease;
-        }
-
-        /* Hide entire block if no Geez text initially */
-        .speaker-block:empty, 
-        .speaker-block[data-empty="true"] {
-            display: none !important;
         }
 
         .speaker-block::before {
             content: "";
             position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            border-radius: 4px 0 0 4px;
+            left: 20px;
+            top: 24px;
+            bottom: 24px;
+            width: 3px;
+            border-radius: 10px;
         }
 
-        .deacon-block::before { background: linear-gradient(180deg, var(--imperial-red), #6B0F0F); box-shadow: 0 0 15px rgba(163, 29, 29, 0.6); }
-        .priest-block::before { background: linear-gradient(180deg, var(--gold), #967A20); box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); }
-        .asst_priest-block::before { background: linear-gradient(180deg, var(--emerald), #0D8247); box-shadow: 0 0 15px rgba(20, 184, 102, 0.6); }
-        .people-block::before { background: linear-gradient(180deg, var(--silver), #868C96); box-shadow: 0 0 15px rgba(192, 197, 206, 0.4); }
+        .deacon-block::before { background: var(--imperial-red); box-shadow: 0 0 15px var(--imperial-red); }
+        .priest-block::before { background: var(--gold); box-shadow: 0 0 15px var(--gold); }
+        .asst_priest-block::before { background: var(--emerald); box-shadow: 0 0 15px var(--emerald); }
+        .people-block::before { background: var(--silver); box-shadow: 0 0 15px var(--silver); }
 
         .speaker-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            margin-left: 10px;
         }
-        
-        .speaker-icon {
-            width: 22px;
-            height: 22px;            
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-        }
-        .deacon-block .speaker-icon { fill: #FF8585; }
-        .priest-block .speaker-icon { fill: var(--gold-bright); }
-        .asst_priest-block .speaker-icon { fill: #66E0A3; }
-        .people-block .speaker-icon { fill: #E8EBF2; }
 
         .speaker-label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 700;
             letter-spacing: 2.5px;
             text-transform: uppercase;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            color: rgba(255, 255, 255, 0.4);
         }
-        .deacon-block .speaker-label { color: #FF8585; }
-        .priest-block .speaker-label { color: var(--gold-bright); }
-        .asst_priest-block .speaker-label { color: #66E0A3; }
-        .people-block .speaker-label { color: #E8EBF2; }
 
         .geez {
             font-family: 'Abyssinica SIL', serif;
-            font-size: 2.2rem;
+            font-size: 2.15rem;
             line-height: 1.4;
             color: var(--ivory);
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-left: 10px;
             white-space: pre-line;
-            text-shadow: 0 2px 12px rgba(253, 251, 247, 0.15);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
         .amharic {
             font-family: 'Noto Sans Ethiopic', sans-serif;
-            font-size: 1.35rem;
+            font-size: 1.25rem;
             line-height: 1.6;
             color: var(--silver);
-            padding-left: 12px;
-            border-left: 2px solid rgba(212, 175, 55, 0.2);
+            margin-top: 10px;
+            margin-left: 10px;
             white-space: pre-line;
+            opacity: 0.85;
+            border-left: 2px solid rgba(212, 175, 55, 0.25);
+            padding-left: 15px;
         }
 
         .insight-box {
-            margin-top: 25px;
-            background: linear-gradient(180deg, rgba(212, 175, 55, 0.05) 0%, rgba(212, 175, 55, 0.01) 100%);
-            border: 1px solid rgba(212, 175, 55, 0.15);
-            padding: 28px 35px;
+            margin-top: 30px;
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 24px 40px;
             border-radius: 20px;
             flex-shrink: 0;
             position: relative;
         }
         
-        /* Subtle insight flare */
-        .insight-box::before {
-            content: '';
-            position: absolute;
-            top: -1px; left: 10%; width: 30%; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.6), transparent);
-        }
-
         .insight-header {
             font-size: 0.8rem;
             color: var(--gold-bright);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            font-weight: 700;
         }
+
         .insight-text {
             font-size: 1.15rem;
-            line-height: 1.65;
+            line-height: 1.7;
             color: var(--ivory);
             font-weight: 300;
+            font-family: 'Noto Sans Ethiopic', sans-serif;
         }
 
         .footer {
-            margin-top: 25px;
+            margin-top: 35px;
             text-align: center;
             font-size: 0.75rem;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.2);
-            letter-spacing: 4px;
+            color: rgba(255, 255, 255, 0.15);
+            letter-spacing: 6px;
             text-transform: uppercase;
             flex-shrink: 0;
         }
 
-        /* Auto-sizing based on dialogue entries */
-        .dialogue-flow.many-entries .geez { font-size: 1.7rem; }
-        .dialogue-flow.many-entries .amharic { font-size: 1.15rem; }
-        .dialogue-flow.many-entries .speaker-block { padding: 12px 15px 12px 30px; }
-        .dialogue-flow.many-entries { gap: 20px; }
-        
-        .dialogue-flow.very-many-entries .geez { font-size: 1.4rem; }
-        .dialogue-flow.very-many-entries .amharic { font-size: 1.05rem; line-height: 1.4; }
-        .dialogue-flow.very-many-entries .speaker-block { padding: 10px 10px 10px 25px; border-radius: 0 12px 12px 0;}
-        .dialogue-flow.very-many-entries { gap: 16px; }
-        .dialogue-flow.very-many-entries .speaker-label { font-size: 0.8rem; }
-        .dialogue-flow.very-many-entries .speaker-icon { width: 18px; height: 18px; }
+        /* Responsive scaling */
+        .dialogue-flow.many-entries .geez { font-size: 1.8rem; }
+        .dialogue-flow.many-entries .amharic { font-size: 1.1rem; }
+        .dialogue-flow.very-many-entries .geez { font-size: 1.5rem; }
+        .dialogue-flow.very-many-entries .amharic { font-size: 1.0rem; }
 
     </style>
 </head>
@@ -280,116 +221,16 @@
         </div>
 
         <div class="dialogue-flow" id="dialogue-flow">
-            <!-- Legacy Static Blocks (Fallback) -->
-            <div class="speaker-block deacon-block" id="deacon-box">
-                <div class="speaker-header">
-                    <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z"/></svg>
-                    <span class="speaker-label">ዲያቆን — Deacon</span>
-                </div>
-                <div class="geez" id="deacon-geez">{{deacon_geez}}</div>
-                <div class="amharic" id="deacon-amh">{{deacon_amharic}}</div>
-            </div>
-
-            <div class="speaker-block priest-block" id="priest-box">
-                <div class="speaker-header">
-                    <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 2h2v5h5v2h-5v5h5v2h-5v6h-2v-6H6v-2h5v-5H6V7h5V2z"/></svg>
-                    <span class="speaker-label">ካህን — Priest</span>
-                </div>
-                <div class="geez" id="priest-geez">{{priest_geez}}</div>
-                <div class="amharic" id="priest-amh">{{priest_amharic}}</div>
-            </div>
-
-            <div class="speaker-block people-block" id="people-box">
-                <div class="speaker-header">
-                    <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                    <span class="speaker-label">ሕዝብ — People</span>
-                </div>
-                <div class="geez" id="people-geez">{{people_geez}}</div>
-                <div class="amharic" id="people-amh">{{people_amharic}}</div>
-            </div>
+            <!-- Dynamic Dialogue Injection -->
+            {{dialogue_html}}
         </div>
 
         <div class="insight-box">
-            <div class="insight-header">
-                 <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold-bright)"><path d="M12 2L15 9l7 3-7 3-3 7-3-7-7-3 7-3z"/></svg>
-                 መንፈሳዊ ትምህርት
-            </div>
-            <div class="insight-text">{{teaching_insight}}</div>
+            <div class="insight-header">መንፈሳዊ ትምህርት</div>
+            <div class="insight-text" id="insight-text">{{teaching_insight}}</div>
         </div>
 
         <div class="footer">EOTC Media Studio • ቅዳሴ ሐዋርያት</div>
     </div>
-
-    <!-- Data Injection for Dynamic Dialogue -->
-    <script id="dialogue-data" type="application/json">
-{{dialogue_json}}
-    </script>
-
-    <script>
-        function hideIfEmpty(boxId, geezId, amhId) {
-            const box = document.getElementById(boxId);
-            const geez = document.getElementById(geezId).innerText.trim();            
-            // If the template string is literally empty or just the placeholder
-            if (!geez || geez === '{{' + geezId.replace('-','_') + '}}') {
-                box.style.display = 'none';
-            }
-        }
-
-        const icons = {
-            'priest': '<svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 2h2v5h5v2h-5v5h5v2h-5v6h-2v-6H6v-2h5v-5H6V7h5V2z"/></svg>',
-            'deacon': '<svg class="speaker-icon" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z"/></svg>',
-            'people': '<svg class="speaker-icon" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>',
-            'asst_priest': '<svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 2h2v5h5v2h-5v5h5v2h-5v6h-2v-6H6v-2h5v-5H6V7h5V2z"/></svg>'
-        };
-        
-        const labels = {
-            'priest': 'ካህን — Priest',
-            'deacon': 'ዲያቆን — Deacon',
-            'people': 'ሕዝብ — People',
-            'asst_priest': 'ንፍቅ ካህን — Asst. Priest'
-        };
-
-        const dialogueDataStr = document.getElementById('dialogue-data').innerText.trim();
-        
-        if (dialogueDataStr && dialogueDataStr !== '{{dialogue_json}}') {
-            // New dynamic dialogue format
-            const dialogueFlow = document.getElementById('dialogue-flow');
-            dialogueFlow.innerHTML = ''; // Clear fallback boxes
-            
-            try {
-                const dialogueArray = JSON.parse(dialogueDataStr);
-                
-                // Adjust sizes for lots of text
-                if (dialogueArray.length >= 6) {
-                    dialogueFlow.classList.add('very-many-entries');
-                } else if (dialogueArray.length >= 4) {
-                    dialogueFlow.classList.add('many-entries');
-                }
-
-                dialogueArray.forEach(turn => {
-                    const block = document.createElement('div');
-                    const role = turn.speaker || 'priest'; // default
-                    block.className = `speaker-block ${role}-block`;
-                    
-                    block.innerHTML = `
-                        <div class="speaker-header">
-                            ${icons[role] || icons['priest']}
-                            <span class="speaker-label">${labels[role] || labels['priest']}</span>
-                        </div>
-                        <div class="geez">${turn.geez || ''}</div>
-                        ${turn.amharic ? `<div class="amharic">${turn.amharic}</div>` : ''}
-                    `;
-                    dialogueFlow.appendChild(block);
-                });
-            } catch (e) {
-                console.error("JSON Parsing failed", e);
-            }
-        } else {
-            // Legacy flat format
-            hideIfEmpty('deacon-box', 'deacon-geez', 'deacon-amh');
-            hideIfEmpty('priest-box', 'priest-geez', 'priest-amh');
-            hideIfEmpty('people-box', 'people-geez', 'people-amh');
-        }
-    </script>
 </body>
 </html>
