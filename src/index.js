@@ -42,29 +42,9 @@ async function loadSequentialSegment(anaphoraType) {
 }
 
 // --- EOTC Scholar Refinement (AI) ---
+// Bypassed because it corrupts our perfectly ordered dialogue arrays
 async function refineSegmentWithAI(segment) {
-    const prompt = `CRITICAL: Output valid JSON only. Refine dialogue attribution for teaching Part: ${segment.liturgy_part}`;
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) return segment;
-
-    try {
-        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json',
-                'HTTP-Referer': 'https://github.com/burakaza27-ops/daily-drip-'
-            },
-            body: JSON.stringify({
-                model: 'google/gemini-2.0-flash-001',
-                messages: [{ role: 'user', content: prompt }],
-                response_format: { type: "json_object" },
-                temperature: 0.1
-            })
-        });
-        const data = await res.json();
-        return { ...segment, ...JSON.parse(data.choices[0].message.content) };
-    } catch { return segment; }
+    return segment;
 }
 
 // --- Spiritual Insight Generation (AI) ---
@@ -200,11 +180,11 @@ async function broadcastToTelegram(imagePath, caption) {
 async function main() {
     const args = process.argv.slice(2);
     const contentType = args.find(a => a.startsWith('--type='))?.split('=')[1] || 'default';
-    const anaphoraType = args.find(a => a.startsWith('--anaphora='))?.split('=')[1] || 'hawaryat';
+    const anaphoraType = args.find(a => a.startsWith('--anaphora='))?.split('=')[1] || 'hawaryats';
 
     if (contentType === 'liturgy_teaching') {
         let { segment, stepCurrent, stepTotal } = await loadSequentialSegment(anaphoraType);
-        segment = await refineSegmentWithAI(segment);
+        // segment = await refineSegmentWithAI(segment); // DISABLED: It destroys dialogue structures
         const insight = await generateInsight(segment);
         const outputPath = await renderHtmlToImage(segment, insight, stepCurrent, stepTotal);
 
