@@ -56,7 +56,7 @@ async function generateInsight(segment) {
         rolesContent = `Deacon: ${segment.deacon_geez}\nPriest: ${segment.priest_geez}\nPeople: ${segment.people_geez}`;
     }
 
-    const prompt = `Output AMHARIC ONLY. Explain the spiritual mystery of this exchange profoundly and accurately. MUST BE CONCISE: NO MORE THAN 3 SENTENCES OR LINES. Do not use filler words. Text: ${segment.liturgy_part}\n${rolesContent}`;
+    const prompt = `You are a strict Ethiopian Orthodox Tewahedo Church (EOTC) scholar. Provide a profoundly accurate and completely error-free theological explanation of the spiritual mystery of this liturgical exchange. \n\nCRITICAL CONSTRAINTS:\n1. LANGUAGE: You MUST output STRICTLY in Ethiopian Amharic (አማርኛ) ONLY! Do NOT output Tigrigna. Do NOT output English.\n2. LENGTH: MUST BE CONCISE, strictly 1 to 2 sentences max.\n3. FOCUS: Only the deep theological mystery.\n\nText: ${segment.liturgy_part}\n${rolesContent}`;
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return "ይህ ቅዱስ ውይይት የሰማያዊ አንድነት መገለጫ ነው።";
 
@@ -67,7 +67,7 @@ async function generateInsight(segment) {
             body: JSON.stringify({
                 model: 'google/gemini-2.0-flash-001',
                 messages: [{ role: 'user', content: prompt }],
-                temperature: 0.7
+                temperature: 0.1
             })
         });
         const data = await res.json();
