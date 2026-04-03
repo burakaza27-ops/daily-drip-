@@ -56,7 +56,7 @@ async function generateInsight(segment) {
         rolesContent = `Deacon: ${segment.deacon_geez}\nPriest: ${segment.priest_geez}\nPeople: ${segment.people_geez}`;
     }
 
-    const prompt = `You are a strict Ethiopian Orthodox Tewahedo Church (EOTC) scholar. Provide a profoundly accurate and completely error-free theological explanation of the spiritual mystery of this liturgical exchange. \n\nCRITICAL CONSTRAINTS:\n1. LANGUAGE: You MUST output STRICTLY in Ethiopian Amharic (አማርኛ) ONLY! Do NOT output Tigrigna. Do NOT output English.\n2. LENGTH: MUST BE CONCISE, strictly 1 to 2 sentences max.\n3. FOCUS: Only the deep theological mystery.\n\nText: ${segment.liturgy_part}\n${rolesContent}`;
+    const prompt = `You are a strict Ethiopian Orthodox Tewahedo Church (EOTC) scholar. Provide a profoundly accurate theological explanation of the spiritual mystery of this liturgical exchange.\n\nCRITICAL CONSTRAINTS:\n1. LANGUAGE: YOUR ENTIRE RESPONSE MUST BE WRITTEN IN ETHIOPIAN AMHARIC (አማርኛ) FIDEL SCRIPT ONLY. DO NOT USE ANY ENGLISH WORDS.\n2. LENGTH: MUST BE CONCISE, strictly 1 to 2 sentences max.\n3. FOCUS: Only the deep theological mystery.\n\nText: ${segment.liturgy_part}\n${rolesContent}\n\nመንፈሳዊ ትምህርት (በአማርኛ ብቻ):`;
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return "ይህ ቅዱስ ውይይት የሰማያዊ አንድነት መገለጫ ነው።";
 
