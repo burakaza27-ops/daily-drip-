@@ -1,8 +1,6 @@
 name: Daily Spiritual Drip
 
 on:
-  schedule:
-    - cron: '0 4 * * *' # በኢትዮጵያ ልክ ጠዋት 1:00 (7:00 AM) ማለት ነው
   workflow_dispatch:
 
 jobs:
