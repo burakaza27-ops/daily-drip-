@@ -15,6 +15,41 @@ function escapeHtml(text) {
         .replace(/'/g, '&#039;');
 }
 
+// --- Strip speaker abbreviation prefixes (ይ.ሕ., ይ.ካ., ይ.ዲ., etc.) ---
+function stripSpeakerPrefix(text) {
+    if (!text) return '';
+    // Matches: ይ.ሕ. / ይ. ሕ. / ይ.ካ. / ይ. ካ. / ይ.ዲ. / ይ. ዲ. and optional trailing space
+    return text.replace(/^ይ\.\s*[\u1215\u12ab\u12d2]\.?\s*/u, '').trim();
+}
+
+// --- Ethiopian Calendar Date ---
+function toEthiopianDate(jsDate) {
+    const MONTHS = ['መስከረም','ጥቅምት','ኅዳር','ታኅሳስ','ጥር','የካቲት','መጋቢት','ሚያዝያ','ግንቦት','ሰኔ','ሐምሌ','ነሐሴ','ጳጉሜ'];
+    // Reference anchor: Sep 11, 2023 (UTC) = Meskerem 1, 2016 E.C.
+    const refDate = new Date(Date.UTC(2023, 8, 11));
+    const msPerDay = 86400000;
+    const daysDiff = Math.floor((Date.UTC(jsDate.getUTCFullYear(), jsDate.getUTCMonth(), jsDate.getUTCDate()) - refDate.getTime()) / msPerDay);
+
+    let ethYear = 2016;
+    let remaining = daysDiff;
+    if (remaining >= 0) {
+        while (true) {
+            const yearLen = (ethYear % 4 === 3) ? 366 : 365;
+            if (remaining < yearLen) break;
+            remaining -= yearLen;
+            ethYear++;
+        }
+    } else {
+        while (remaining < 0) {
+            ethYear--;
+            remaining += (ethYear % 4 === 3) ? 366 : 365;
+        }
+    }
+    const ethMonth = Math.floor(remaining / 30) + 1;
+    const ethDay   = (remaining % 30) + 1;
+    return `${ethDay} ${MONTHS[Math.min(ethMonth - 1, 12)]} ${ethYear} ዓ.ም`;
+}
+
 // --- Liturgical Segment Loader ---
 async function loadSequentialSegment(anaphoraType) {
     const dataPath = path.resolve(`./src/data/anaphoras/${anaphoraType}.json`);
@@ -81,20 +116,42 @@ async function renderHtmlToImage(segment, insight, stepCurrent, stepTotal) {
     const tplPath = path.resolve('./templates/liturgy_teaching.html');
     let html = await fs.readFile(tplPath, 'utf-8');
 
+    // Split liturgy_part on '|' → subtitle (left) + main title (right)
+    const titleParts = (segment.liturgy_part || '').split('|');
+    const mainTitle  = (titleParts.length > 1 ? titleParts[1] : titleParts[0]).trim();
+    const subtitle   = (titleParts.length > 1 ? titleParts[0] : '').trim();
+
+    // Strip speaker prefixes from each dialogue turn before rendering
+    let cleanDialogue = null;
+    if (segment.dialogue && Array.isArray(segment.dialogue)) {
+        cleanDialogue = segment.dialogue.map(turn => ({
+            ...turn,
+            geez:    stripSpeakerPrefix(turn.geez),
+            amharic: turn.amharic ? stripSpeakerPrefix(turn.amharic) : turn.amharic
+        }));
+    }
+
+    // Ethiopian calendar date for footer
+    const postDate = toEthiopianDate(new Date());
+
     // Handle string injection safe for application/json block
-    const dialogueJsonStr = segment.dialogue ? JSON.stringify(segment.dialogue).replace(/</g, '\\u003c') : '';
+    const dialogueSource  = cleanDialogue || segment.dialogue;
+    const dialogueJsonStr = dialogueSource ? JSON.stringify(dialogueSource).replace(/</g, '\\u003c') : '';
 
     html = html
-        .replace('{{step_current}}', stepCurrent).replace('{{step_total}}', stepTotal)
-        .replace('{{liturgy_part}}', escapeHtml(segment.liturgy_part))
-        .replace('{{dialogue_json}}', dialogueJsonStr || '{{dialogue_json}}') // Keep placeholder if no dialogue
-        .replace('{{deacon_geez}}', (segment.deacon_geez || '').trim())
-        .replace('{{deacon_amharic}}', (segment.deacon_amharic || '').trim())
-        .replace('{{priest_geez}}', (segment.priest_geez || '').trim())
-        .replace('{{priest_amharic}}', (segment.priest_amharic || '').trim())
-        .replace('{{people_geez}}', (segment.people_geez || '').trim())
-        .replace('{{people_amharic}}', (segment.people_amharic || '').trim())
-        .replace('{{teaching_insight}}', escapeHtml(insight));
+        .replace('{{step_current}}',    stepCurrent)
+        .replace('{{step_total}}',      stepTotal)
+        .replace('{{liturgy_subtitle}}',escapeHtml(subtitle))
+        .replace('{{liturgy_part}}',    escapeHtml(mainTitle))
+        .replace('{{post_date}}',       postDate)
+        .replace('{{dialogue_json}}',   dialogueJsonStr || '{{dialogue_json}}')
+        .replace('{{deacon_geez}}',     stripSpeakerPrefix(segment.deacon_geez  || '').trim())
+        .replace('{{deacon_amharic}}',  stripSpeakerPrefix(segment.deacon_amharic || '').trim())
+        .replace('{{priest_geez}}',     stripSpeakerPrefix(segment.priest_geez  || '').trim())
+        .replace('{{priest_amharic}}',  stripSpeakerPrefix(segment.priest_amharic || '').trim())
+        .replace('{{people_geez}}',     stripSpeakerPrefix(segment.people_geez  || '').trim())
+        .replace('{{people_amharic}}',  stripSpeakerPrefix(segment.people_amharic || '').trim())
+        .replace('{{teaching_insight}}',escapeHtml(insight));
 
     const tmpHtmlPath = path.resolve('./templates/temp_render.html');
     await fs.writeFile(tmpHtmlPath, html);
@@ -102,19 +159,32 @@ async function renderHtmlToImage(segment, insight, stepCurrent, stepTotal) {
     const browser = await puppeteer.launch({
         executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
         headless: 'new',
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--font-render-hinting=none',           // Sharper Ethiopic glyph edges
+            '--disable-font-subpixel-positioning',  // Prevents blurry subpixel shifts
+        ]
     });
 
     try {
         const page = await browser.newPage();
-        await page.setViewport({ width: 1080, height: 1350, deviceScaleFactor: 2 });
+        await page.setViewport({ width: 1080, height: 1350, deviceScaleFactor: 3 });
         await page.goto(`file://${tmpHtmlPath}`, { waitUntil: 'networkidle0' });
+
+        // Guarantee Abyssinica SIL is fully loaded before screenshot
         await page.evaluateHandle('document.fonts.ready');
+        await page.evaluate(() => Promise.all([
+            document.fonts.load('700 2.65rem "Abyssinica SIL"'),
+            document.fonts.load('400 1.75rem "Noto Sans Ethiopic"'),
+        ]));
 
         // Dynamic Height Calculation: Perfectly fit the rendered body
         const bodyHandle = await page.$('body');
         const { height } = await bodyHandle.boundingBox();
-        await page.setViewport({ width: 1080, height: Math.max(1350, Math.ceil(height)), deviceScaleFactor: 2 });
+        await page.setViewport({ width: 1080, height: Math.max(1350, Math.ceil(height)), deviceScaleFactor: 3 });
 
         const outputDir = path.resolve('./output');
         await fs.mkdir(outputDir, { recursive: true });

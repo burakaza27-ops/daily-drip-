@@ -193,22 +193,35 @@
             text-transform: uppercase;
         }
 
+        .liturgy-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.55;
+            margin-bottom: 10px;
+        }
+        .liturgy-subtitle:empty { display: none; }
+
         .liturgy-title {
             font-family: 'Abyssinica SIL', serif;
-            font-size: 1.55rem;
+            font-size: 2.1rem;
             color: var(--gold);
             line-height: 1.618;
             letter-spacing: 0.01em;
         }
 
-        /* ── Thin gold divider ── */
-        .header-rule {
-            margin: 20px auto 0;
-            width: 60px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--gold-etched), transparent);
-            opacity: 0.5;
+        /* ── Ethiopian Cross Ornament ── */
+        .header-ornament {
+            margin: 22px auto 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
         }
+        .header-ornament svg { display: block; }
 
         /* ── DIALOGUE FLOW ── */
         .dialogue-flow {
@@ -225,31 +238,36 @@
         /* ── SPEAKER BLOCK ── */
         .speaker-block {
             position: relative;
-            background: rgba(255, 255, 255, 0.015);
-            border-radius: 14px;
+            border-radius: 16px;
             padding: 18px 20px 18px 32px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
             /* Floating Inlay */
-            box-shadow: 
+            box-shadow:
                 inset 0 1px 1px rgba(255,255,255,0.05),
-                0 4px 12px rgba(0,0,0,0.2);
+                0 4px 16px rgba(0,0,0,0.22);
             transition: box-shadow 0.3s ease;
         }
+
+        /* Role-tinted backgrounds */
+        .deacon-block    { background: rgba(139,0,0,0.07);    border: 1px solid rgba(139,0,0,0.12); }
+        .priest-block    { background: rgba(212,175,55,0.07);  border: 1px solid rgba(212,175,55,0.12); }
+        .asst_priest-block { background: rgba(46,139,87,0.07);  border: 1px solid rgba(46,139,87,0.12); }
+        .people-block    { background: rgba(184,175,163,0.06); border: 1px solid rgba(184,175,163,0.10); }
 
         .speaker-block::before {
             content: "";
             position: absolute;
             left: 0;
-            top: 18px;
-            bottom: 18px;
-            width: 3px;
-            border-radius: 3px;
+            top: 16px;
+            bottom: 16px;
+            width: 4px;
+            border-radius: 4px;
         }
 
-        .deacon-block::before    { background: var(--imperial-red); }
-        .priest-block::before    { background: var(--gold-etched); }
-        .asst_priest-block::before { background: var(--emerald); }
-        .people-block::before    { background: var(--silver); }
+        /* Glowing accent stripes */
+        .deacon-block::before    { background: var(--imperial-red); box-shadow: 2px 0 14px rgba(139,0,0,0.65); }
+        .priest-block::before    { background: var(--gold-etched);  box-shadow: 2px 0 14px rgba(212,175,55,0.65); }
+        .asst_priest-block::before { background: var(--emerald);    box-shadow: 2px 0 14px rgba(46,139,87,0.65); }
+        .people-block::before    { background: var(--silver);       box-shadow: 2px 0 14px rgba(184,175,163,0.50); }
 
         /* ── SPEAKER HEADER (Sacred 2026 Perfection) ── */
         .speaker-header {
@@ -295,11 +313,11 @@
         /* ── GE'EZ TEXT: Metallic Gold-to-Ivory Etching ── */
         .geez {
             font-family: 'Abyssinica SIL', serif;
-            font-size: 2.05rem;
+            font-size: 2.65rem;
             line-height: 1.618;
             letter-spacing: 0.02em;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             white-space: pre-line;
             /* Antique Metallic etched gradient */
             background: linear-gradient(160deg, #F3E5AB 0%, #FAF7F2 45%, #D4AF37 100%);
@@ -310,63 +328,23 @@
             filter: 
                 drop-shadow(0px 0.5px 0.5px rgba(255, 255, 255, 0.15)) /* Specular highlight edge */
                 drop-shadow(0px 0px 1px rgba(139, 0, 0, 0.3)) /* Red top-throb */
-                drop-shadow(0px 0px 18px rgba(212, 175, 55, 0.28));
+                drop-shadow(0px 0px 22px rgba(212, 175, 55, 0.32));
         }
 
         /* ── AMHARIC TEXT ── */
         .amharic {
             font-family: 'Noto Sans Ethiopic', sans-serif;
-            font-size: 1.35rem;
+            font-size: 1.75rem;
             line-height: 1.618;
             letter-spacing: 0.01em;
             color: var(--silver);
             opacity: 0.75;
-            padding-left: 14px;
-            border-left: 1.5px solid rgba(197, 160, 89, 0.22);
+            padding-left: 16px;
+            border-left: 2px solid rgba(197, 160, 89, 0.25);
             white-space: pre-line;
         }
 
-        /* ── INSIGHT BOX ── */
-        .insight-box {
-            margin-top: 28px;
-            background: rgba(212, 175, 55, 0.04);
-            border: 1px solid rgba(212, 175, 55, 0.14);
-            padding: 24px 30px;
-            border-radius: 22px;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 5;
-        }
 
-        /* Left accent stripe on insight box */
-        .insight-box::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 20px;
-            bottom: 20px;
-            width: 2px;
-            background: linear-gradient(180deg, var(--gold-etched), transparent);
-            border-radius: 2px;
-        }
-
-        .insight-header {
-            font-family: 'Noto Sans Ethiopic', sans-serif;
-            font-size: 0.72rem;
-            color: var(--gold-bright);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 12px;
-            opacity: 0.85;
-        }
-
-        .insight-text {
-            font-size: 1.2rem;
-            line-height: 1.65;
-            color: var(--ivory);
-            font-weight: 400;
-        }
 
         /* ── FOOTER ── */
         .footer {
@@ -375,24 +353,33 @@
             font-family: 'Inter', 'Noto Sans Ethiopic', sans-serif;
             font-size: 0.72rem;
             color: var(--silver);
-            opacity: 0.35;
+            opacity: 0.38;
             letter-spacing: 3px;
             text-transform: uppercase;
-            padding-top: 24px;
+            padding-top: 28px;
             position: relative;
-            z-index: 10; /* Foreground content */
+            z-index: 10;
+        }
+        .footer-date {
+            display: block;
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 0.78rem;
+            letter-spacing: 1.5px;
+            text-transform: none;
+            opacity: 0.7;
+            margin-top: 5px;
         }
 
         /* ── ADAPTIVE FONT SIZES FOR LONG SEGMENTS ── */
-        .dialogue-flow.many-entries .geez      { font-size: 1.65rem; }
-        .dialogue-flow.many-entries .amharic   { font-size: 1.15rem; }
-        .dialogue-flow.many-entries .speaker-block { padding: 14px 16px 14px 30px; }
-        .dialogue-flow.many-entries            { gap: 18px; }
+        .dialogue-flow.many-entries .geez      { font-size: 2.15rem; }
+        .dialogue-flow.many-entries .amharic   { font-size: 1.45rem; }
+        .dialogue-flow.many-entries .speaker-block { padding: 16px 18px 16px 32px; }
+        .dialogue-flow.many-entries            { gap: 20px; }
 
-        .dialogue-flow.very-many-entries .geez    { font-size: 1.38rem; line-height: 1.55; }
-        .dialogue-flow.very-many-entries .amharic  { font-size: 1.08rem;   line-height: 1.5;  }
-        .dialogue-flow.very-many-entries .speaker-block { padding: 10px 12px 10px 26px; border-radius: 10px; }
-        .dialogue-flow.very-many-entries           { gap: 14px; }
+        .dialogue-flow.very-many-entries .geez    { font-size: 1.75rem; line-height: 1.55; }
+        .dialogue-flow.very-many-entries .amharic  { font-size: 1.28rem; line-height: 1.5;  }
+        .dialogue-flow.very-many-entries .speaker-block { padding: 12px 14px 12px 28px; border-radius: 10px; }
+        .dialogue-flow.very-many-entries           { gap: 16px; }
     </style>
 </head>
 <body>
@@ -401,8 +388,36 @@
         <div class="card-edge-light"></div>
         <div class="header">
             <div class="step-tracker">PART {{step_current}} OF {{step_total}}</div>
+            <div class="liturgy-subtitle">{{liturgy_subtitle}}</div>
             <div class="liturgy-title">{{liturgy_part}}</div>
-            <div class="header-rule"></div>
+            <div class="header-ornament">
+                <svg viewBox="0 0 480 36" width="480" height="36" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="lg-l" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#D4AF37" stop-opacity="0"/>
+                            <stop offset="100%" stop-color="#D4AF37" stop-opacity="0.45"/>
+                        </linearGradient>
+                        <linearGradient id="lg-r" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#D4AF37" stop-opacity="0.45"/>
+                            <stop offset="100%" stop-color="#D4AF37" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                    <line x1="0" y1="18" x2="195" y2="18" stroke="url(#lg-l)" stroke-width="0.9"/>
+                    <line x1="285" y1="18" x2="480" y2="18" stroke="url(#lg-r)" stroke-width="0.9"/>
+                    <g transform="translate(240,18)" opacity="0.72">
+                        <rect x="-2" y="-14" width="4" height="28" fill="#D4AF37" rx="1"/>
+                        <rect x="-14" y="-2" width="28" height="4" fill="#D4AF37" rx="1"/>
+                        <rect x="-14" y="-14" width="9" height="9" fill="none" stroke="#D4AF37" stroke-width="1.1" rx="1" opacity="0.45"/>
+                        <rect x="5" y="-14" width="9" height="9" fill="none" stroke="#D4AF37" stroke-width="1.1" rx="1" opacity="0.45"/>
+                        <rect x="-14" y="5" width="9" height="9" fill="none" stroke="#D4AF37" stroke-width="1.1" rx="1" opacity="0.45"/>
+                        <rect x="5" y="5" width="9" height="9" fill="none" stroke="#D4AF37" stroke-width="1.1" rx="1" opacity="0.45"/>
+                        <circle cx="-9.5" cy="-9.5" r="1.2" fill="#D4AF37" opacity="0.5"/>
+                        <circle cx="9.5" cy="-9.5" r="1.2" fill="#D4AF37" opacity="0.5"/>
+                        <circle cx="-9.5" cy="9.5" r="1.2" fill="#D4AF37" opacity="0.5"/>
+                        <circle cx="9.5" cy="9.5" r="1.2" fill="#D4AF37" opacity="0.5"/>
+                    </g>
+                </svg>
+            </div>
         </div>
 
         <div class="dialogue-flow" id="dialogue-flow">
@@ -438,12 +453,9 @@
             </div>
         </div>
 
-        <div class="insight-box">
-            <div class="insight-header">❖ መንፈሳዊ ትምህርት</div>
-            <div class="insight-text">{{teaching_insight}}</div>
-        </div>
 
-        <div class="footer">EOTC Media Studio • ቅዳሴ ሐዋርያት</div>
+
+        <div class="footer">EOTC Media Studio • ቅዳሴ ሐዋርያት<span class="footer-date">{{post_date}}</span></div>
     </div>
 
     <!-- Data Injection for Dynamic Dialogue -->
