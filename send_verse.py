@@ -8,6 +8,9 @@ import requests
 import re
 from pathlib import Path
 from typing import Optional
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Professional Logging Configuration
 logging.basicConfig(
@@ -27,7 +30,12 @@ class ThemeManager:
             "ምጽዋትና ርኅራኄ", "ዝምታና ማስተዋል", "እውነተኛ ንስሐ", "የምስጋና ሕይወት",
             "ሰማያዊ ጥበብ", "ክርስቲያናዊ ጽናት", "የእግዚአብሔር ረዳትነት", "የቅዱሳን አማላጅነት", 
             "መንፈሳዊ ማዕረግ", "ሰላመ ልቦና", "የዘመን አጠቃቀም", "ትሕትና በምግባር", 
-            "የነፍስ ተጋድሎ", "የወጣትነት ቅድስና", "የቤተክርስቲያን ፍቅር"
+            "የነፍስ ተጋድሎ", "የወጣትነት ቅድስና", "የቤተክርስቲያን ፍቅር",
+            "ፈተናን ማሸነፍ", "የምላስ ቁጥጥር", "በጎ ሕሊና", "ሰማያዊ ዜግነት", 
+            "መንፈሳዊ ጾም", "የእግዚአብሔርን ቃል ማሰላሰል", "የቅዱሳን ኅብረት", "ወንድማማችነት",
+            "ንስሐና ስርየት", "ተስፋ አለመቁረጥ", "የጌታን መምጣት መጠበቅ", "የመስቀሉ ሚስጥር",
+            "የቅድስት ድንግል ማርያም አማላጅነት", "ከክፉ ጓደኛ መራቅ", "የሥጋ ፈቃድን ማሸነፍ",
+            "በመከራ ውስጥ መጸናት", "የዕለት ተዕለት ቅዳሴ"
         ]
 
     def _get_last_theme(self) -> Optional[str]:
@@ -77,13 +85,13 @@ class AIGenerator:
 STRICT TELEGRAM HTML RULES:
 1. DO NOT use <html>, <body>, or <head> tags.
 2. DO NOT output the text string '\\n'. 
-3. DO NOT use Markdown (**). Use ONLY <b>, <i>, and <blockquote>.
+3. DO NOT use Markdown (**). Use ONLY <b>, <i>, <u>, and <blockquote>.
 4. SPACING: You MUST leave EXACTLY ONE EMPTY LINE between a blockquote and a paragraph, and EXACTLY TWO EMPTY LINES between sections.
 5. LANGUAGE RULE: The Bible verse in Section 1 MUST be in modern AMHARIC. Do NOT use Ge'ez for the Bible verse.
 
 ROLE: Distinguished Spiritual Father (ሊቀ ሊቃውንት) of the EOTC.
-TARGET: Sunday School youth (የሃይማኖት ማኅቶት አብሪዎች).
-STYLE: Majestic, Poetic, and Deep. Use rich Amharic so the youth can understand easily.
+TARGET: EOTC faithful, specifically focusing on the youth and young professionals.
+STYLE: Majestic, Poetic, Deeply Theological yet Highly Practical. Provide immense detail.
 SESSION: {unique_id} | THEME: {theme}
 
 MANDATORY STRUCTURE (Copy this formatting exactly. DO NOT use numbers like 1., 2. for sections):
@@ -91,33 +99,35 @@ MANDATORY STRUCTURE (Copy this formatting exactly. DO NOT use numbers like 1., 2
 <b>❖ 📅 የዕለቱ መንፈሳዊ ማዕድ ❖</b>
 
 
-📖 <b>የሰማያዊ ጥበብ መክፈቻ</b>
+📖 <b>የሰማያዊ ጥበብ መክፈቻ (Divine Wisdom)</b>
 <blockquote>[Amharic Verse Text]
 — <i>[Book] [Chapter:Verse]</i></blockquote>
 
-
-⸻ ❖ ⸻
-
-
-⛪ <b>የቅዱሳን አባቶች የብርሃን ማዕድ</b>
-<blockquote>"[Father's Direct Quote in Amharic]"
-— <i>[Name of the Father, e.g., ቅዱስ ዮሐንስ አፈወርቅ]</i></blockquote>
-
-[Write a LONG, detailed paragraph (5-7 sentences) explaining the 'ምሥጢር' (deep spiritual mystery) behind this quote in clear AMHARIC so the youth can apply it to their modern lives. You MUST <b>bold</b> one or two core phrases in this paragraph for emphasis.]
+[Write a 3-4 sentence deeply theological reflection explaining the exact historical or spiritual context of this verse. Why did the Holy Spirit inspire this?]
 
 
 ⸻ ❖ ⸻
 
 
-🕊️ <b>ለነገው የአጥቢያ ብርሃን</b>
-[Provide a comprehensive challenge for the youth. Write a detailed guide (at least 6 powerful sentences in Amharic) using keywords: 'ባለራዕይ', 'ጽኑዕ', 'መዝገበ ሃይማኖት', 'ተጋድሎ'. Make it inspiring and demanding of spiritual excellence. <b>Bold</b> key phrases.]
+⛪ <b>የቅዱሳን አባቶች የብርሃን ማዕድ (Wisdom of the Fathers)</b>
+<blockquote>"[A deep, spiritually profound, exact or paraphrased quote in Amharic]"
+— <i>[Name of the Father, e.g., ቅዱስ ዮሐንስ አፈወርቅ, ቅዱስ ኤፍሬም ሶርያዊ, ቅዱስ ያሬድ, አባ ጊዮርጊስ ዘጋስጫ]</i></blockquote>
+
+[Write a LONG, highly detailed paragraph (7-10 sentences) explaining the 'ምሥጢር' (deep spiritual mystery) behind this quote. Explain HOW it applies to modern challenges, anxiety, or spiritual laziness. You MUST <b>bold</b> at least three core phrases in this paragraph for emphasis, and use <i>italics</i> for spiritual terms.]
 
 
 ⸻ ❖ ⸻
 
 
-✨ <b>የዕለቱ ሐዋርያዊ ቡራኬ</b>
-[A unique, heavy, and majestic one-line blessing in pure Amharic]
+🛡️ <b>የዕለቱ የሕይወት ተጋድሎ (Daily Spiritual Struggle & Application)</b>
+[Provide a comprehensive, highly actionable challenge. Write a detailed guide (at least 6-8 powerful sentences in Amharic) instructing the reader exactly what to do today to live out this theme. Use keywords: 'ባለራዕይ', 'ጽኑዕ', 'መዝገበ ሃይማኖት', 'ተጋድሎ'. Make it inspiring and demanding of spiritual excellence. <b>Bold</b> key phrases.]
+
+
+⸻ ❖ ⸻
+
+
+✨ <b>የዕለቱ ሐዋርያዊ ቡራኬ (Apostolic Blessing)</b>
+[A unique, heavy, and majestic one-line blessing in pure Amharic, praying for their day]
 
 ለመንፈሳዊ ቤተሰብዎ ያካፍሉ 🕊️"""
 
