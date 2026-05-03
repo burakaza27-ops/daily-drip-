@@ -209,9 +209,9 @@ async function broadcastToTelegram(imagePath, caption) {
     // Safety: Telegram captions have a 1024 char limit.
     // If the HTML version is too long, we'll lose the closing tags.
     // We truncate early and don't wrap dynamic content in tags that can break.
-    let safeCaption = caption;
-    if (caption.length > 1020) {
-        safeCaption = caption.substring(0, 1017) + '...';
+    let safeCaption = caption || '';
+    if (safeCaption.length > 1020) {
+        safeCaption = safeCaption.substring(0, 1017) + '...';
     }
 
     const fileBuffer = await fs.readFile(imagePath);
@@ -222,8 +222,10 @@ async function broadcastToTelegram(imagePath, caption) {
             console.log(`📡 Sending to ${chatId}...`);
             const formData = new FormData();
             formData.append('chat_id', chatId);
-            formData.append('caption', safeCaption);
-            formData.append('parse_mode', 'HTML');
+            if (safeCaption) {
+                formData.append('caption', safeCaption);
+                formData.append('parse_mode', 'HTML');
+            }
             formData.append('photo', blob, 'liturgy.png');
 
             const res = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, { method: 'POST', body: formData });
@@ -231,7 +233,7 @@ async function broadcastToTelegram(imagePath, caption) {
             if (!res.ok) {
                 console.error(`❌ TG ERROR:`, JSON.stringify(result));
                 // Fallback: Try without HTML if it failed due to entities
-                if (result.description?.includes('entities')) {
+                if (result.description?.includes('entities') && safeCaption) {
                     console.log('🔄 Attempting fallback (No HTML)...');
                     const fbData = new FormData();
                     fbData.append('chat_id', chatId);
@@ -258,38 +260,8 @@ async function main() {
         const insight = await generateInsight(segment);
         const outputPath = await renderHtmlToImage(segment, insight, stepCurrent, stepTotal);
 
-        // Build HTML-Safe Caption
-        const labels = {
-            'priest': 'ካህን',
-            'deacon': 'ዲያቆን',
-            'people': 'ሕዝብ',
-            'asst_priest': 'ንፍቅ ካህን'
-        };
-
-        let rolesText = "";
-        
-        if (segment.dialogue && Array.isArray(segment.dialogue)) {
-            for (const turn of segment.dialogue) {
-                const label = labels[turn.speaker] || labels['priest'];
-                rolesText += `✦ <b>${label}:</b> ${escapeHtml(turn.geez)}\n`;
-                if (turn.amharic) rolesText += `${escapeHtml(turn.amharic)}\n`;
-                rolesText += `\n`;
-            }
-        } else {
-            // Legacy flat extraction
-            if (segment.deacon_geez) {
-                rolesText += `✦ <b>ዲያቆን:</b> ${escapeHtml(segment.deacon_geez)}\n${escapeHtml(segment.deacon_amharic)}\n\n`;
-            }
-            if (segment.priest_geez) {
-                rolesText += `✦ <b>ካህን:</b> ${escapeHtml(segment.priest_geez)}\n${escapeHtml(segment.priest_amharic)}\n\n`;
-            }
-            if (segment.people_geez) {
-                rolesText += `✦ <b>ሕዝብ:</b> ${escapeHtml(segment.people_geez)}\n${escapeHtml(segment.people_amharic)}\n\n`;
-            }
-        }
-
-        const anaphoraName = segment.liturgy_part.split('|')[0] || "ቅዳሴ ሐዋርያ";
-        const caption = `<b>❖ ${anaphoraName.trim()} — ክፍል ${stepCurrent}/${stepTotal} ❖</b>\n\n📖 <b>${escapeHtml(segment.liturgy_part)}</b>\n\n${rolesText}✨ ${escapeHtml(insight)}\n\nለመንፈሳዊ ቤተሰብዎ ያካፍሉ 🕊️`;
+        // Broadcast the image to Telegram without any text caption
+        const caption = "";
 
         await broadcastToTelegram(outputPath, caption);
         console.log(`✅ ALL TASKS COMPLETE`);
