@@ -179,6 +179,7 @@ async function renderHtmlToImage(segment, insight, stepCurrent, stepTotal) {
         await page.evaluate(() => Promise.all([
             document.fonts.load('700 2.65rem "Abyssinica SIL"'),
             document.fonts.load('400 1.75rem "Noto Sans Ethiopic"'),
+            document.fonts.load('600 0.68rem "Noto Sans Ethiopic"'),
         ]));
 
         // Dynamic Height Calculation: Perfectly fit the rendered body
